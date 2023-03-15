@@ -2,11 +2,11 @@
 <?xml version="1.0"?>
 <Document>
   <Network type="subnet" name="MAIN">
-    <Node name="node_MAIN_LOOP_1" type="MAIN_LOOP" x="80" y="180">
+    <Node name="node_MAIN_LOOP_1" type="MAIN_LOOP" x="80" y="170">
       <Parameter name="LENGTH" type="int" value="512" description="subnet_param"/>
       <Parameter name="ADVANCE" type="int" value="160" description="subnet_param"/>
       <Parameter name="WINDOW_LENGTH" type="int" value="512" description="subnet_param"/>
-      <Parameter name="SAMPLING_RATE" type="int" value="16000" description="subnet_param"/>
+      <Parameter name="SAMPLING_RATE" type="int" value="48000" description="subnet_param"/>
     </Node>
     <Node name="node_RosNodeGenerator_1" type="RosNodeGenerator" x="60" y="90">
       <Parameter name="NODE_NAME" type="string" value="hri_hark_node" description="Node name for ROS"/>
@@ -23,7 +23,7 @@
   </Network>
   <Network type="iterator" name="MAIN_LOOP">
     <Node name="node_Iterate_1" type="Iterate" x="100" y="30">
-      <Parameter name="MAX_ITER" type="int" value="498" description="Number of iteration to do (max)"/>
+      <Parameter name="MAX_ITER" type="int" value="1494" description="Number of iteration to do (max)"/>
       <Parameter name="HARKMW.PROCESS" type="string" value="local" description="Specify a name that indicates the machine to be executed. [default: local]"/>
       <Parameter name="HARKMW.TOPIC" type="string" value="local" description="Specifies the prefix of the topic name used for data transmission and reception by MQTT. [default: local] In actual transmission, &#x27;/&lt;terminal name&gt;&#x27; is added to the value specified here. e.g.) &#x27;local/VALUE&#x27;"/>
     </Node>
@@ -125,7 +125,7 @@
       <Parameter name="MIN_FREQUENCY" type="int" value="125" description="Minimum frequency (Hz) [default: 125]"/>
       <Parameter name="MAX_FREQUENCY" type="int" value="7900" description="Maximum frequency (Hz) [default: 7900]"/>
       <Parameter name="WINDOW" type="string" value="HAMMING" description="A window function for overlap-add. WINDOW should be CONJ, HAMMING, RECTANGLE, or HANNING. [default: HAMMING]"/>
-      <Parameter name="OUTPUT_GAIN" type="float" value="1" description="Output gain factor. [default: 1.0]"/>
+      <Parameter name="OUTPUT_GAIN" type="float" value="10" description="Output gain factor. [default: 1.0]"/>
       <Parameter name="HARKMW.PROCESS" type="string" value="local" description="Specify a name that indicates the machine to be executed. [default: local]"/>
       <Parameter name="HARKMW.TOPIC" type="string" value="local" description="Specifies the prefix of the topic name used for data transmission and reception by MQTT. [default: local] In actual transmission, &#x27;/&lt;terminal name&gt;&#x27; is added to the value specified here. e.g.) &#x27;local/VALUE&#x27;"/>
     </Node>
@@ -179,7 +179,7 @@
       <Parameter name="MIN_FREQUENCY" type="int" value="125" description="Minimum frequency (Hz) [default: 125]"/>
       <Parameter name="MAX_FREQUENCY" type="int" value="7900" description="Maximum frequency (Hz) [default: 7900]"/>
       <Parameter name="WINDOW" type="string" value="HAMMING" description="A window function for overlap-add. WINDOW should be CONJ, HAMMING, RECTANGLE, or HANNING. [default: HAMMING]"/>
-      <Parameter name="OUTPUT_GAIN" type="float" value="1" description="Output gain factor. [default: 1.0]"/>
+      <Parameter name="OUTPUT_GAIN" type="float" value="10" description="Output gain factor. [default: 1.0]"/>
       <Parameter name="HARKMW.PROCESS" type="string" value="local" description="Specify a name that indicates the machine to be executed. [default: local]"/>
       <Parameter name="HARKMW.TOPIC" type="string" value="local" description="Specifies the prefix of the topic name used for data transmission and reception by MQTT. [default: local] In actual transmission, &#x27;/&lt;terminal name&gt;&#x27; is added to the value specified here. e.g.) &#x27;local/VALUE&#x27;"/>
     </Node>
