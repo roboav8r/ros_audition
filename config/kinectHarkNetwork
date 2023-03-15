@@ -15,6 +15,7 @@
     <NetOutput name="raw_wave" node="node_MAIN_LOOP_1" terminal="raw_wave" object_type="any" description="Dynamic"/>
     <NetOutput name="sep_ghdss_wave" node="node_MAIN_LOOP_1" terminal="sep_ghdss_wave" object_type="any" description="Dynamic"/>
     <NetOutput name="sep_bf_wav" node="node_MAIN_LOOP_1" terminal="sep_bf_wav" object_type="any" description="Dynamic"/>
+    <NetOutput name="sub_src" node="node_MAIN_LOOP_1" terminal="sub_src" object_type="any" description="Dynamic"/>
   </Network>
   <Network type="iterator" name="MAIN_LOOP">
     <Node name="node_Iterate_1" type="Iterate" x="100" y="30">
@@ -187,6 +188,27 @@
       <Parameter name="HARKMW.PROCESS" type="string" value="local" description="Specify a name that indicates the machine to be executed. [default: local]"/>
       <Parameter name="HARKMW.TOPIC" type="string" value="local" description="Specifies the prefix of the topic name used for data transmission and reception by MQTT. [default: local] In actual transmission, &#x27;/&lt;terminal name&gt;&#x27; is added to the value specified here. e.g.) &#x27;local/VALUE&#x27;"/>
     </Node>
+    <Node name="node_RosHarkMsgsSubscriber_1" type="RosHarkMsgsSubscriber" x="230" y="590">
+      <Parameter name="STREAM_SELECTION" type="string" value="HarkSource" description="Selector of stream you want to realize. All other subscription will be disabled."/>
+      <Parameter name="NB_CHANNELS" type="int" value="8" description="The number of input channels. Only used for no data period (Not important). [default: 8]"/>
+      <Parameter name="FFT_LENGTH" type="int" value="512" description="FFT length in sample. Only used for no data period (Not important). [default: 512]"/>
+      <Parameter name="TOPIC_NAME_HARKWAVE" type="string" value="HarkWave" description="Subscribed topic name for ROS (HarkWave type message)"/>
+      <Parameter name="TOPIC_NAME_HARKFFT" type="string" value="HarkFFT" description="Subscribed topic name for ROS (HarkFFT type message)"/>
+      <Parameter name="TOPIC_NAME_HARKFEATURE" type="string" value="HarkFeature" description="Subscribed topic name for ROS (HarkFeature type message)"/>
+      <Parameter name="TOPIC_NAME_HARKSOURCE" type="string" value="speaker_source_loc" description="Subscribed topic name for ROS (HarkSource type message)"/>
+      <Parameter name="TOPIC_NAME_HARKSRCWAVE" type="string" value="HarkSrcWave" description="Subscribed topic name for ROS (HarkSrcWave type message)"/>
+      <Parameter name="TOPIC_NAME_HARKSRCFFT" type="string" value="HarkSrcFFT" description="Subscribed topic name for ROS (HarkSrcFFT type message)"/>
+      <Parameter name="TOPIC_NAME_HARKSRCFEATURE" type="string" value="HarkSrcFeature" description="Subscribed topic name for ROS (HarkSrcFeature type message)"/>
+      <Parameter name="TOPIC_NAME_HARKSRCFEATUREMFM" type="string" value="HarkSrcFeatureMFM" description="Subscribed topic name for ROS (HarkSrcFeatureMFM type message)"/>
+      <Parameter name="TOPIC_NAME_HARKJULIUS" type="string" value="HarkJulius" description="Subscribed topic name for ROS (HarkJulius type message)"/>
+      <Parameter name="ROS_LOOP_RATE" type="float" value="1000000" description="This allows you to specify a frequency that you would like to loop at [Hz]. Keep this value large. (If ROS interval is shorter than HARK interval, ROS interval is overwritten.)"/>
+      <Parameter name="MSG_BUFFER_NUM" type="int" value="100" description="Buffer size for a ROS subscribed message."/>
+      <Parameter name="DATA_BUFFER_NUM" type="int" value="100" description="Buffer save size for a HARK output. Too small value makes packet loss. Too large value takes large memory. Minimum size is 5."/>
+      <Parameter name="REMAIN_LATEST" type="bool" value="true" description="Enable to keep the latest data as output even when this module doesn&#x27;t receive any messages [default: false]"/>
+      <Parameter name="ENABLE_DEBUG" type="bool" value="false" description="print debug message of this module in case of true."/>
+      <Parameter name="HARKMW.PROCESS" type="string" value="local" description="Specify a name that indicates the machine to be executed. [default: local]"/>
+      <Parameter name="HARKMW.TOPIC" type="string" value="local" description="Specifies the prefix of the topic name used for data transmission and reception by MQTT. [default: local] In actual transmission, &#x27;/&lt;terminal name&gt;&#x27; is added to the value specified here. e.g.) &#x27;local/VALUE&#x27;"/>
+    </Node>
     <Link from="node_AudioStreamFromMic_1" output="AUDIO" to="node_MatrixToMap_1" input="INPUT"/>
     <Link from="node_MatrixToMap_1" output="OUTPUT" to="node_SaveWavePCM_1" input="INPUT"/>
     <Link from="node_AudioStreamFromMic_1" output="AUDIO" to="node_MultiFFT_1" input="INPUT"/>
@@ -194,18 +216,19 @@
     <Link from="node_PowerCalcForMatrix_1" output="OUTPUT" to="node_BGNEstimator_1" input="INPUT_POWER"/>
     <Link from="node_BGNEstimator_1" output="NOISE_POWER" to="node_RosStdMsgsPublisher_1" input="INPUT"/>
     <Link from="node_MultiFFT_1" output="OUTPUT" to="node_GHDSS_1" input="INPUT_FRAMES"/>
-    <Link from="node_ConstantLocalization_1" output="SOURCES" to="node_GHDSS_1" input="INPUT_SOURCES"/>
     <Link from="node_GHDSS_1" output="OUTPUT" to="node_Synthesize_1" input="INPUT"/>
     <Link from="node_Synthesize_1" output="OUTPUT" to="node_SaveWavePCM_2" input="INPUT"/>
     <Link from="node_MultiFFT_1" output="OUTPUT" to="node_BeamForming_1" input="INPUT_FRAMES"/>
-    <Link from="node_ConstantLocalization_1" output="SOURCES" to="node_BeamForming_1" input="INPUT_SOURCES"/>
     <Link from="node_Synthesize_2" output="OUTPUT" to="node_SaveWavePCM_3" input="INPUT"/>
     <Link from="node_BeamForming_1" output="OUTPUT" to="node_Synthesize_2" input="INPUT"/>
+    <Link from="node_RosHarkMsgsSubscriber_1" output="SRCOUT" to="node_GHDSS_1" input="INPUT_SOURCES"/>
+    <Link from="node_RosHarkMsgsSubscriber_1" output="SRCOUT" to="node_BeamForming_1" input="INPUT_SOURCES"/>
     <NetOutput name="NOT_EOF" node="node_AudioStreamFromMic_1" terminal="NOT_EOF" object_type="bool" description="Always true, this is for &quot;condition&quot; setting"/>
     <NetOutput name="bkgd_noise" node="node_RosStdMsgsPublisher_1" terminal="OUTPUT" object_type="ObjectRef" description="This is a dummy output. It has no purpose other than activating this node."/>
     <NetOutput name="raw_wave" node="node_SaveWavePCM_1" terminal="OUTPUT" object_type="Map&amp;lt;int,ObjectRef&amp;gt;" description="The same as input."/>
     <NetOutput name="sep_ghdss_wave" node="node_SaveWavePCM_2" terminal="OUTPUT" object_type="Map&amp;lt;int,ObjectRef&amp;gt;" description="The same as input."/>
     <NetCondition name="CONDITION" node="node_Iterate_1" terminal="OUTPUT"/>
     <NetOutput name="sep_bf_wav" node="node_SaveWavePCM_3" terminal="OUTPUT" object_type="any" description="outputsadded by the user"/>
+    <NetOutput name="sub_src" node="node_RosHarkMsgsSubscriber_1" terminal="SRCOUT" object_type="Vector&amp;lt;ObjectRef&amp;gt;" description="Source output port when STREAM_SELECTION=HarkSource or HarkSrcWave or HarkSrcFFT or HarkSrcFeature or HarkSrcFeatureMFM"/>
   </Network>
 </Document>
