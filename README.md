@@ -20,5 +20,4 @@ Functions I am working on implementing:
 - Speaker localization provided by separate LiDAR/Visual ROS tracking node to HARK network
 - Beamforming using HARK network
 - Automatic Speech Recognition using Kaldi, Julius, or CMUSphinx
-- Background noise estimation/feature extraction with HARK
 - Background noise classification/scene estimation with Python node
