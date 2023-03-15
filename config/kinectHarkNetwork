@@ -14,6 +14,7 @@
     <NetOutput name="bkgd_noise" node="node_MAIN_LOOP_1" terminal="bkgd_noise" object_type="any" description="Dynamic"/>
     <NetOutput name="raw_wave" node="node_MAIN_LOOP_1" terminal="raw_wave" object_type="any" description="Dynamic"/>
     <NetOutput name="sep_ghdss_wave" node="node_MAIN_LOOP_1" terminal="sep_ghdss_wave" object_type="any" description="Dynamic"/>
+    <NetOutput name="sep_bf_wav" node="node_MAIN_LOOP_1" terminal="sep_bf_wav" object_type="any" description="Dynamic"/>
   </Network>
   <Network type="iterator" name="MAIN_LOOP">
     <Node name="node_Iterate_1" type="Iterate" x="100" y="30">
@@ -79,7 +80,7 @@
       <Parameter name="HARKMW.PROCESS" type="string" value="local" description="Specify a name that indicates the machine to be executed. [default: local]"/>
       <Parameter name="HARKMW.TOPIC" type="string" value="local" description="Specifies the prefix of the topic name used for data transmission and reception by MQTT. [default: local] In actual transmission, &#x27;/&lt;terminal name&gt;&#x27; is added to the value specified here. e.g.) &#x27;local/VALUE&#x27;"/>
     </Node>
-    <Node name="node_ConstantLocalization_1" type="ConstantLocalization" x="310" y="460">
+    <Node name="node_ConstantLocalization_1" type="ConstantLocalization" x="240" y="460">
       <Parameter name="ANGLES" type="object" value="&lt;Vector&lt;float&gt; 0.0 &gt;" description="A vector to specify source locations. Each vector element shows azimuth of a source in degree."/>
       <Parameter name="ELEVATIONS" type="object" value="&lt;Vector&lt;float&gt; 0.0 &gt;" description="Elevations of source locations. Each element represents an elevation of each source location."/>
       <Parameter name="POWER" type="object" value="&lt;Vector&lt;float&gt; 1.0 &gt;" description="Power of sources. Each element represents a power of each source."/>
@@ -132,6 +133,60 @@
       <Parameter name="HARKMW.PROCESS" type="string" value="local" description="Specify a name that indicates the machine to be executed. [default: local]"/>
       <Parameter name="HARKMW.TOPIC" type="string" value="local" description="Specifies the prefix of the topic name used for data transmission and reception by MQTT. [default: local] In actual transmission, &#x27;/&lt;terminal name&gt;&#x27; is added to the value specified here. e.g.) &#x27;local/VALUE&#x27;"/>
     </Node>
+    <Node name="node_BeamForming_1" type="BeamForming" x="620" y="590">
+      <Parameter name="LENGTH" type="int" value="512" description="The frame length of each channel (in samples) [default: 512]."/>
+      <Parameter name="ADVANCE" type="int" value="160" description="The shift length beween adjacent frames (in samples)[default: 160]."/>
+      <Parameter name="SAMPLING_RATE" type="int" value="16000" description="Sampling rate (Hz) [default: 16000]."/>
+      <Parameter name="LOWER_BOUND_FREQUENCY" type="int" value="0" description="Lower bound of frequency (Hz). [default: 0]"/>
+      <Parameter name="UPPER_BOUND_FREQUENCY" type="int" value="8000" description="Upper bound of frequency (Hz). [default: 8000]"/>
+      <Parameter name="TF_CONJ_FILENAME" type="string" value="kinectGeometricTf.zip" description="Filename of a pre-measured transfer function for separation."/>
+      <Parameter name="INITW_FILENAME" type="string" value="" description="Filename of an initial separation matrix. If specified, a matrix in INITW_FILENAME is used as an initial separation matrix. Otherwise, initial separation matrix is estimated from the geometrical relationship or pre-measured TF according to TF_CONJ."/>
+      <Parameter name="GICA_SS_METHOD" type="string" value="ADAPTIVE" description="The calculation method for SS step size parameter corresponding to the blind separation part. &quot;FIX&quot; uses a fixed step size as GICA_SS_MYU, &quot;LC_MYU&quot; uses the same value as GICA_LC_MYU, and &quot;ADAPTIVE&quot; adaptively estimates an optimal step size. This is used only when BF_METHOD=GICA. [default: ADAPTIVE]"/>
+      <Parameter name="GHDSS_SS_METHOD" type="string" value="ADAPTIVE" description="The calculation method for SS step size parameter corresponding to the blind separation part. &quot;FIX&quot; uses a fixed step size as GHDSS_SS_MYU, &quot;LC_MYU&quot; uses the same value as GHDSS_LC_MYU, and &quot;ADAPTIVE&quot; adaptively estimates an optimal step size. This is used only when BF_METHOD=GHDSS. [default: ADAPTIVE]"/>
+      <Parameter name="GICA_SS_MYU" type="float" value="0.001" description="SS step size value if GICA_SS_METHOD=FIX. SS adaptive step size scaler if GICA_SS_METHOD=ADAPTIVE. [default 0.001]"/>
+      <Parameter name="GHDSS_SS_MYU" type="float" value="0.001" description="SS step size value if GHDSS_SS_METHOD=FIX. SS adaptive step size scaler if GHDSS_SS_METHOD=ADAPTIVE. [default 0.001]"/>
+      <Parameter name="LCMV_LC_METHOD" type="string" value="ADAPTIVE" description="The calculation method for LC step size corresponding to geometric constraints. &quot;FIX&quot; uses a fixed value as LCMV_LC_MYU, and &quot;Adaptive&quot; adaptively estimates an optimal step size as LCMV_LC_MYU. This is used only when BF_METHOD=LCMV. [default: ADAPTIVE]"/>
+      <Parameter name="GJ_LC_METHOD" type="string" value="ADAPTIVE" description="The calculation method for LC step size corresponding to geometric constraints. &quot;FIX&quot; uses a fixed value as GJ_LC_MYU, and &quot;Adaptive&quot; adaptively estimates an optimal step size as GJ_LC_MYU. This is used only when BF_METHOD=GJ. [default: ADAPTIVE]"/>
+      <Parameter name="GICA_LC_METHOD" type="string" value="ADAPTIVE" description="The calculation method for LC step size corresponding to geometric constraints. &quot;FIX&quot; uses a fixed value as GICA_LC_MYU, and &quot;Adaptive&quot; adaptively estimates an optimal step size as GICA_LC_MYU. This is used only when BF_METHOD=GICA. [default: ADAPTIVE]"/>
+      <Parameter name="GHDSS_LC_METHOD" type="string" value="ADAPTIVE" description="The calculation method for LC step size corresponding to geometric constraints. &quot;FIX&quot; uses a fixed value as GHDSS_LC_MYU, and &quot;Adaptive&quot; adaptively estimates an optimal step size as GHDSS_LC_MYU. This is used only when BF_METHOD=GHDSS. [default: ADAPTIVE]"/>
+      <Parameter name="LCMV_LC_MYU" type="float" value="0.001" description="LC step size value if LCMV_LC_METHOD=FIX. LC adaptive step size scaler if LCMV_LC_METHOD=ADAPTIVE. [default 0.001]"/>
+      <Parameter name="GJ_LC_MYU" type="float" value="0.001" description="LC step size value if GJ_LC_METHOD=FIX. LC adaptive step size scaler if GJ_LC_METHOD=ADAPTIVE. [default 0.001]"/>
+      <Parameter name="GICA_LC_MYU" type="float" value="0.001" description="LC step size value if GICA_LC_METHOD=FIX. LC adaptive step size scaler if GICA_LC_METHOD=ADAPTIVE and if GICA_SS_METHOD=LC_MYU. [default 0.001]"/>
+      <Parameter name="GHDSS_LC_MYU" type="float" value="0.001" description="LC step size value if GHDSS_LC_METHOD=FIX. LC adaptive step size scaler if GHDSS_LC_METHOD=ADAPTIVE and if GHDSS_SS_METHOD=LC_MYU. [default 0.001]"/>
+      <Parameter name="GHDSS_LC_CONST" type="string" value="FULL" description="The calculation method for geometric constraints. &quot;FULL&quot; uses all elements of a matrix, and &quot;DIAG&quot; only uses diagonal parts. [default: FULL]"/>
+      <Parameter name="GICA_SS_SCAL" type="float" value="1" description="Scaling factor of the nonlinear function for SS step size. [default: 1.0]"/>
+      <Parameter name="GHDSS_SS_SCAL" type="float" value="1" description="Scaling factor of the nonlinear function for SS step size. [default: 1.0]"/>
+      <Parameter name="GHDSS_NOISE_FLOOR" type="float" value="0" description="Noise floor value. [default 0.0]"/>
+      <Parameter name="GHDSS_UPDATE" type="string" value="STEP" description="The update method of separation matrix. &quot;STEP&quot; updates W sequentially, i.e., based on SS and then on LC cost. &quot;TOTAL&quot; updates W based on an integrated value of SS and LC cost [default: STEP]"/>
+      <Parameter name="UPDATE_METHOD_W" type="string" value="ID" description="Switching method of separation matrix, W. [default: ID]"/>
+      <Parameter name="UPDATE_ACCEPT_DISTANCE" type="float" value="300" description="Angle allowance to switch separation matrix in mm. This parameter is available when UPDATE_METHOD_W is POS or ID_POS and when INITW_FILENAME is set. [default: 300.0]"/>
+      <Parameter name="EXPORT_W" type="bool" value="false" description="Separation matrix W is exported if true. [default: false]"/>
+      <Parameter name="EXPORT_W_FILENAME" type="string" value="" description="The filename to export W."/>
+      <Parameter name="BF_METHOD" type="string" value="DS" description="beam-forming algorithm type."/>
+      <Parameter name="ENABLE_DEBUG" type="bool" value="false" description="enable debug print"/>
+      <Parameter name="HARKMW.PROCESS" type="string" value="local" description="Specify a name that indicates the machine to be executed. [default: local]"/>
+      <Parameter name="HARKMW.TOPIC" type="string" value="local" description="Specifies the prefix of the topic name used for data transmission and reception by MQTT. [default: local] In actual transmission, &#x27;/&lt;terminal name&gt;&#x27; is added to the value specified here. e.g.) &#x27;local/VALUE&#x27;"/>
+    </Node>
+    <Node name="node_Synthesize_2" type="Synthesize" x="910" y="590">
+      <Parameter name="LENGTH" type="int" value="512" description="Size of window length in sample. [default: 512]"/>
+      <Parameter name="ADVANCE" type="int" value="160" description="The length in sample between a frame and a previous frame. [default: 160]"/>
+      <Parameter name="SAMPLING_RATE" type="int" value="16000" description="Sampling rate (Hz) [default: 16000]."/>
+      <Parameter name="MIN_FREQUENCY" type="int" value="125" description="Minimum frequency (Hz) [default: 125]"/>
+      <Parameter name="MAX_FREQUENCY" type="int" value="7900" description="Maximum frequency (Hz) [default: 7900]"/>
+      <Parameter name="WINDOW" type="string" value="HAMMING" description="A window function for overlap-add. WINDOW should be CONJ, HAMMING, RECTANGLE, or HANNING. [default: HAMMING]"/>
+      <Parameter name="OUTPUT_GAIN" type="float" value="1" description="Output gain factor. [default: 1.0]"/>
+      <Parameter name="HARKMW.PROCESS" type="string" value="local" description="Specify a name that indicates the machine to be executed. [default: local]"/>
+      <Parameter name="HARKMW.TOPIC" type="string" value="local" description="Specifies the prefix of the topic name used for data transmission and reception by MQTT. [default: local] In actual transmission, &#x27;/&lt;terminal name&gt;&#x27; is added to the value specified here. e.g.) &#x27;local/VALUE&#x27;"/>
+    </Node>
+    <Node name="node_SaveWavePCM_3" type="SaveWavePCM" x="1180" y="590">
+      <Parameter name="BASENAME" type="string" value="../data/sep_bf_" description="Basename of files. [default: sep_]"/>
+      <Parameter name="ADVANCE" type="int" value="160" description="The shift length beween adjacent frames (in samples)[default: 160]."/>
+      <Parameter name="SAMPLING_RATE" type="int" value="16000" description="Sampling rate (in samples)[default: 16000]."/>
+      <Parameter name="BITS" type="string" value="int16" description="Bit format of samples. int16 and int24  bits are supported."/>
+      <Parameter name="INPUT_BITS" type="string" value="as_BITS" description="Bit format of input wav file."/>
+      <Parameter name="HARKMW.PROCESS" type="string" value="local" description="Specify a name that indicates the machine to be executed. [default: local]"/>
+      <Parameter name="HARKMW.TOPIC" type="string" value="local" description="Specifies the prefix of the topic name used for data transmission and reception by MQTT. [default: local] In actual transmission, &#x27;/&lt;terminal name&gt;&#x27; is added to the value specified here. e.g.) &#x27;local/VALUE&#x27;"/>
+    </Node>
     <Link from="node_AudioStreamFromMic_1" output="AUDIO" to="node_MatrixToMap_1" input="INPUT"/>
     <Link from="node_MatrixToMap_1" output="OUTPUT" to="node_SaveWavePCM_1" input="INPUT"/>
     <Link from="node_AudioStreamFromMic_1" output="AUDIO" to="node_MultiFFT_1" input="INPUT"/>
@@ -142,10 +197,15 @@
     <Link from="node_ConstantLocalization_1" output="SOURCES" to="node_GHDSS_1" input="INPUT_SOURCES"/>
     <Link from="node_GHDSS_1" output="OUTPUT" to="node_Synthesize_1" input="INPUT"/>
     <Link from="node_Synthesize_1" output="OUTPUT" to="node_SaveWavePCM_2" input="INPUT"/>
+    <Link from="node_MultiFFT_1" output="OUTPUT" to="node_BeamForming_1" input="INPUT_FRAMES"/>
+    <Link from="node_ConstantLocalization_1" output="SOURCES" to="node_BeamForming_1" input="INPUT_SOURCES"/>
+    <Link from="node_Synthesize_2" output="OUTPUT" to="node_SaveWavePCM_3" input="INPUT"/>
+    <Link from="node_BeamForming_1" output="OUTPUT" to="node_Synthesize_2" input="INPUT"/>
     <NetOutput name="NOT_EOF" node="node_AudioStreamFromMic_1" terminal="NOT_EOF" object_type="bool" description="Always true, this is for &quot;condition&quot; setting"/>
     <NetOutput name="bkgd_noise" node="node_RosStdMsgsPublisher_1" terminal="OUTPUT" object_type="ObjectRef" description="This is a dummy output. It has no purpose other than activating this node."/>
     <NetOutput name="raw_wave" node="node_SaveWavePCM_1" terminal="OUTPUT" object_type="Map&amp;lt;int,ObjectRef&amp;gt;" description="The same as input."/>
     <NetOutput name="sep_ghdss_wave" node="node_SaveWavePCM_2" terminal="OUTPUT" object_type="Map&amp;lt;int,ObjectRef&amp;gt;" description="The same as input."/>
     <NetCondition name="CONDITION" node="node_Iterate_1" terminal="OUTPUT"/>
+    <NetOutput name="sep_bf_wav" node="node_SaveWavePCM_3" terminal="OUTPUT" object_type="any" description="outputsadded by the user"/>
   </Network>
 </Document>
