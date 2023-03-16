@@ -2,13 +2,13 @@
 <?xml version="1.0"?>
 <Document>
   <Network type="subnet" name="MAIN">
-    <Node name="node_MAIN_LOOP_1" type="MAIN_LOOP" x="80" y="170">
+    <Node name="node_MAIN_LOOP_1" type="MAIN_LOOP" x="120" y="180">
       <Parameter name="LENGTH" type="int" value="512" description="subnet_param"/>
       <Parameter name="ADVANCE" type="int" value="160" description="subnet_param"/>
       <Parameter name="WINDOW_LENGTH" type="int" value="512" description="subnet_param"/>
       <Parameter name="SAMPLING_RATE" type="int" value="48000" description="subnet_param"/>
     </Node>
-    <Node name="node_RosNodeGenerator_1" type="RosNodeGenerator" x="60" y="90">
+    <Node name="node_RosNodeGenerator_1" type="RosNodeGenerator" x="100" y="100">
       <Parameter name="NODE_NAME" type="string" value="hri_hark_node" description="Node name for ROS"/>
       <Parameter name="HARKMW.PROCESS" type="string" value="local" description="Specify a name that indicates the machine to be executed. [default: local]"/>
       <Parameter name="HARKMW.TOPIC" type="string" value="local" description="Specifies the prefix of the topic name used for data transmission and reception by MQTT. [default: local] In actual transmission, &#x27;/&lt;terminal name&gt;&#x27; is added to the value specified here. e.g.) &#x27;local/VALUE&#x27;"/>
@@ -22,29 +22,29 @@
     <NetOutput name="sub_src" node="node_MAIN_LOOP_1" terminal="sub_src" object_type="any" description="Dynamic"/>
   </Network>
   <Network type="iterator" name="MAIN_LOOP">
-    <Node name="node_Iterate_1" type="Iterate" x="100" y="30">
+    <Node name="node_Iterate_1" type="Iterate" x="160" y="100">
       <Parameter name="MAX_ITER" type="int" value="1494" description="Number of iteration to do (max)"/>
       <Parameter name="HARKMW.PROCESS" type="string" value="local" description="Specify a name that indicates the machine to be executed. [default: local]"/>
       <Parameter name="HARKMW.TOPIC" type="string" value="local" description="Specifies the prefix of the topic name used for data transmission and reception by MQTT. [default: local] In actual transmission, &#x27;/&lt;terminal name&gt;&#x27; is added to the value specified here. e.g.) &#x27;local/VALUE&#x27;"/>
     </Node>
-    <Node name="node_AudioStreamFromMic_1" type="AudioStreamFromMic" x="40" y="130">
+    <Node name="node_AudioStreamFromMic_1" type="AudioStreamFromMic" x="100" y="200">
       <Parameter name="LENGTH" type="subnet_param" value="LENGTH" description="The frame length of each channel (in samples) [default: 512]."/>
       <Parameter name="ADVANCE" type="subnet_param" value="ADVANCE" description="The shift length beween adjacent frames (in samples)[default: 160]."/>
       <Parameter name="CHANNEL_COUNT" type="int" value="7" description="The number of channels."/>
       <Parameter name="SAMPLING_RATE" type="subnet_param" value="SAMPLING_RATE" description="Sampling rate (Hz) [default: 16000]."/>
       <Parameter name="DEVICETYPE" type="string" value="ALSA" description="Device type [default: WS]."/>
       <Parameter name="GAIN" type="string" value="0dB" description="capture gain (dB)  [default: 0dB]."/>
-      <Parameter name="DEVICE" type="string" value="plughw:4,0" description="Device name or IP address [default: 127.0.0.1]"/>
+      <Parameter name="DEVICE" type="string" value="plughw:2,0" description="Device name or IP address [default: 127.0.0.1]"/>
       <Parameter name="HARKMW.PROCESS" type="string" value="local" description="Specify a name that indicates the machine to be executed. [default: local]"/>
       <Parameter name="HARKMW.TOPIC" type="string" value="local" description="Specifies the prefix of the topic name used for data transmission and reception by MQTT. [default: local] In actual transmission, &#x27;/&lt;terminal name&gt;&#x27; is added to the value specified here. e.g.) &#x27;local/VALUE&#x27;"/>
     </Node>
-    <Node name="node_MatrixToMap_1" type="MatrixToMap" x="400" y="130">
+    <Node name="node_MatrixToMap_1" type="MatrixToMap" x="460" y="200">
       <Parameter name="OUTPUT_TYPE" type="string" value="map_of_row_vectors" description="Type of the output. If map_of_matrix is selected, the key is zero and the value is the input Matrix. If map_of_row_vectors is selected, the keys are the row indices and the values are Vectors extracted the row components. If map_of_column_vectors is selected, the keys are the column indices and the values are Vectors ectracted the column components. [default: map_of_row_vectors]"/>
       <Parameter name="DEBUG" type="bool" value="false" description="Show debug points. [default: false]"/>
       <Parameter name="HARKMW.PROCESS" type="string" value="local" description="Specify a name that indicates the machine to be executed. [default: local]"/>
       <Parameter name="HARKMW.TOPIC" type="string" value="local" description="Specifies the prefix of the topic name used for data transmission and reception by MQTT. [default: local] In actual transmission, &#x27;/&lt;terminal name&gt;&#x27; is added to the value specified here. e.g.) &#x27;local/VALUE&#x27;"/>
     </Node>
-    <Node name="node_SaveWavePCM_1" type="SaveWavePCM" x="660" y="130">
+    <Node name="node_SaveWavePCM_1" type="SaveWavePCM" x="720" y="200">
       <Parameter name="BASENAME" type="string" value="../data/raw_" description="Basename of files. [default: sep_]"/>
       <Parameter name="ADVANCE" type="subnet_param" value="ADVANCE" description="The shift length beween adjacent frames (in samples)[default: 160]."/>
       <Parameter name="SAMPLING_RATE" type="int" value="16000" description="Sampling rate (in samples)[default: 16000]."/>
@@ -53,7 +53,7 @@
       <Parameter name="HARKMW.PROCESS" type="string" value="local" description="Specify a name that indicates the machine to be executed. [default: local]"/>
       <Parameter name="HARKMW.TOPIC" type="string" value="local" description="Specifies the prefix of the topic name used for data transmission and reception by MQTT. [default: local] In actual transmission, &#x27;/&lt;terminal name&gt;&#x27; is added to the value specified here. e.g.) &#x27;local/VALUE&#x27;"/>
     </Node>
-    <Node name="node_BGNEstimator_1" type="BGNEstimator" x="870" y="290">
+    <Node name="node_BGNEstimator_1" type="BGNEstimator" x="930" y="360">
       <Parameter name="DELTA" type="float" value="3" description="Power ratio used to decide a threshold to distinguish target signal and background noise. When this value is large, frequency bins with higher power are regarded as background noise, vice versa [default:3.0]"/>
       <Parameter name="L" type="int" value="150" description="Time window length (in frame) to decide the lowest noise power spectrum, Smin [default:150]"/>
       <Parameter name="ALPHA_S" type="float" value="0.7" description="A coefficient for temporal smoothing of input spectrum [default:0.7]"/>
@@ -63,19 +63,19 @@
       <Parameter name="HARKMW.PROCESS" type="string" value="local" description="Specify a name that indicates the machine to be executed. [default: local]"/>
       <Parameter name="HARKMW.TOPIC" type="string" value="local" description="Specifies the prefix of the topic name used for data transmission and reception by MQTT. [default: local] In actual transmission, &#x27;/&lt;terminal name&gt;&#x27; is added to the value specified here. e.g.) &#x27;local/VALUE&#x27;"/>
     </Node>
-    <Node name="node_MultiFFT_1" type="MultiFFT" x="370" y="290">
+    <Node name="node_MultiFFT_1" type="MultiFFT" x="430" y="360">
       <Parameter name="LENGTH" type="subnet_param" value="LENGTH" description="FFT length in sample. [default: 512]"/>
       <Parameter name="WINDOW" type="string" value="CONJ" description="A window function for FFT. WINDOW should be CONJ, HAMMING, RECTANGLE, or HANNING. [default: CONJ]"/>
       <Parameter name="WINDOW_LENGTH" type="subnet_param" value="WINDOW_LENGTH" description="Window length of the window function. [default: 512]"/>
       <Parameter name="HARKMW.PROCESS" type="string" value="local" description="Specify a name that indicates the machine to be executed. [default: local]"/>
       <Parameter name="HARKMW.TOPIC" type="string" value="local" description="Specifies the prefix of the topic name used for data transmission and reception by MQTT. [default: local] In actual transmission, &#x27;/&lt;terminal name&gt;&#x27; is added to the value specified here. e.g.) &#x27;local/VALUE&#x27;"/>
     </Node>
-    <Node name="node_PowerCalcForMatrix_1" type="PowerCalcForMatrix" x="600" y="290">
+    <Node name="node_PowerCalcForMatrix_1" type="PowerCalcForMatrix" x="660" y="360">
       <Parameter name="POWER_TYPE" type="string" value="POW" description="Measure for computing the POW or MAG (i.e. power or magnitude) of the complex spectrum [default: POW]"/>
       <Parameter name="HARKMW.PROCESS" type="string" value="local" description="Specify a name that indicates the machine to be executed. [default: local]"/>
       <Parameter name="HARKMW.TOPIC" type="string" value="local" description="Specifies the prefix of the topic name used for data transmission and reception by MQTT. [default: local] In actual transmission, &#x27;/&lt;terminal name&gt;&#x27; is added to the value specified here. e.g.) &#x27;local/VALUE&#x27;"/>
     </Node>
-    <Node name="node_RosStdMsgsPublisher_1" type="RosStdMsgsPublisher" x="1150" y="290">
+    <Node name="node_RosStdMsgsPublisher_1" type="RosStdMsgsPublisher" x="1210" y="360">
       <Parameter name="ENABLE_DEBUG" type="bool" value="false" description="Set to true to print debug messages."/>
       <Parameter name="ROS_MESSAGE_TYPE" type="string" value="Float64MultiArray" description="Preferred ROS message type when publishing. If the type is not matched to the input, the input will not be published."/>
       <Parameter name="TOPIC_NAME" type="string" value="bkgd_noise" description="Published topic name for ROS (The message type can be defined by ROS_MESSAGE_TYPE.)"/>
@@ -85,7 +85,7 @@
       <Parameter name="HARKMW.PROCESS" type="string" value="local" description="Specify a name that indicates the machine to be executed. [default: local]"/>
       <Parameter name="HARKMW.TOPIC" type="string" value="local" description="Specifies the prefix of the topic name used for data transmission and reception by MQTT. [default: local] In actual transmission, &#x27;/&lt;terminal name&gt;&#x27; is added to the value specified here. e.g.) &#x27;local/VALUE&#x27;"/>
     </Node>
-    <Node name="node_ConstantLocalization_1" type="ConstantLocalization" x="240" y="460">
+    <Node name="node_ConstantLocalization_1" type="ConstantLocalization" x="300" y="530">
       <Parameter name="ANGLES" type="object" value="&lt;Vector&lt;float&gt; 0.0 &gt;" description="A vector to specify source locations. Each vector element shows azimuth of a source in degree."/>
       <Parameter name="ELEVATIONS" type="object" value="&lt;Vector&lt;float&gt; 0.0 &gt;" description="Elevations of source locations. Each element represents an elevation of each source location."/>
       <Parameter name="POWER" type="object" value="&lt;Vector&lt;float&gt; 1.0 &gt;" description="Power of sources. Each element represents a power of each source."/>
@@ -93,7 +93,7 @@
       <Parameter name="HARKMW.PROCESS" type="string" value="local" description="Specify a name that indicates the machine to be executed. [default: local]"/>
       <Parameter name="HARKMW.TOPIC" type="string" value="local" description="Specifies the prefix of the topic name used for data transmission and reception by MQTT. [default: local] In actual transmission, &#x27;/&lt;terminal name&gt;&#x27; is added to the value specified here. e.g.) &#x27;local/VALUE&#x27;"/>
     </Node>
-    <Node name="node_GHDSS_1" type="GHDSS" x="620" y="440">
+    <Node name="node_GHDSS_1" type="GHDSS" x="680" y="510">
       <Parameter name="LENGTH" type="subnet_param" value="LENGTH" description="The frame length of each channel (in samples) [default: 512]."/>
       <Parameter name="ADVANCE" type="subnet_param" value="ADVANCE" description="The shift length beween adjacent frames (in samples)[default: 160]."/>
       <Parameter name="SAMPLING_RATE" type="subnet_param" value="SAMPLING_RATE" description="Sampling rate (Hz) [default: 16000]."/>
@@ -118,7 +118,7 @@
       <Parameter name="HARKMW.PROCESS" type="string" value="local" description="Specify a name that indicates the machine to be executed. [default: local]"/>
       <Parameter name="HARKMW.TOPIC" type="string" value="local" description="Specifies the prefix of the topic name used for data transmission and reception by MQTT. [default: local] In actual transmission, &#x27;/&lt;terminal name&gt;&#x27; is added to the value specified here. e.g.) &#x27;local/VALUE&#x27;"/>
     </Node>
-    <Node name="node_Synthesize_1" type="Synthesize" x="910" y="440">
+    <Node name="node_Synthesize_1" type="Synthesize" x="1010" y="510">
       <Parameter name="LENGTH" type="subnet_param" value="LENGTH" description="Size of window length in sample. [default: 512]"/>
       <Parameter name="ADVANCE" type="subnet_param" value="ADVANCE" description="The length in sample between a frame and a previous frame. [default: 160]"/>
       <Parameter name="SAMPLING_RATE" type="subnet_param" value="SAMPLING_RATE" description="Sampling rate (Hz) [default: 16000]."/>
@@ -129,7 +129,7 @@
       <Parameter name="HARKMW.PROCESS" type="string" value="local" description="Specify a name that indicates the machine to be executed. [default: local]"/>
       <Parameter name="HARKMW.TOPIC" type="string" value="local" description="Specifies the prefix of the topic name used for data transmission and reception by MQTT. [default: local] In actual transmission, &#x27;/&lt;terminal name&gt;&#x27; is added to the value specified here. e.g.) &#x27;local/VALUE&#x27;"/>
     </Node>
-    <Node name="node_SaveWavePCM_2" type="SaveWavePCM" x="1180" y="440">
+    <Node name="node_SaveWavePCM_2" type="SaveWavePCM" x="1240" y="510">
       <Parameter name="BASENAME" type="string" value="../data/sep_ghdss_" description="Basename of files. [default: sep_]"/>
       <Parameter name="ADVANCE" type="subnet_param" value="ADVANCE" description="The shift length beween adjacent frames (in samples)[default: 160]."/>
       <Parameter name="SAMPLING_RATE" type="subnet_param" value="SAMPLING_RATE" description="Sampling rate (in samples)[default: 16000]."/>
@@ -138,7 +138,7 @@
       <Parameter name="HARKMW.PROCESS" type="string" value="local" description="Specify a name that indicates the machine to be executed. [default: local]"/>
       <Parameter name="HARKMW.TOPIC" type="string" value="local" description="Specifies the prefix of the topic name used for data transmission and reception by MQTT. [default: local] In actual transmission, &#x27;/&lt;terminal name&gt;&#x27; is added to the value specified here. e.g.) &#x27;local/VALUE&#x27;"/>
     </Node>
-    <Node name="node_BeamForming_1" type="BeamForming" x="620" y="590">
+    <Node name="node_BeamForming_1" type="BeamForming" x="680" y="660">
       <Parameter name="LENGTH" type="subnet_param" value="LENGTH" description="The frame length of each channel (in samples) [default: 512]."/>
       <Parameter name="ADVANCE" type="subnet_param" value="ADVANCE" description="The shift length beween adjacent frames (in samples)[default: 160]."/>
       <Parameter name="SAMPLING_RATE" type="subnet_param" value="SAMPLING_RATE" description="Sampling rate (Hz) [default: 16000]."/>
@@ -172,7 +172,7 @@
       <Parameter name="HARKMW.PROCESS" type="string" value="local" description="Specify a name that indicates the machine to be executed. [default: local]"/>
       <Parameter name="HARKMW.TOPIC" type="string" value="local" description="Specifies the prefix of the topic name used for data transmission and reception by MQTT. [default: local] In actual transmission, &#x27;/&lt;terminal name&gt;&#x27; is added to the value specified here. e.g.) &#x27;local/VALUE&#x27;"/>
     </Node>
-    <Node name="node_Synthesize_2" type="Synthesize" x="910" y="590">
+    <Node name="node_Synthesize_2" type="Synthesize" x="1010" y="660">
       <Parameter name="LENGTH" type="subnet_param" value="LENGTH" description="Size of window length in sample. [default: 512]"/>
       <Parameter name="ADVANCE" type="subnet_param" value="ADVANCE" description="The length in sample between a frame and a previous frame. [default: 160]"/>
       <Parameter name="SAMPLING_RATE" type="subnet_param" value="SAMPLING_RATE" description="Sampling rate (Hz) [default: 16000]."/>
@@ -183,7 +183,7 @@
       <Parameter name="HARKMW.PROCESS" type="string" value="local" description="Specify a name that indicates the machine to be executed. [default: local]"/>
       <Parameter name="HARKMW.TOPIC" type="string" value="local" description="Specifies the prefix of the topic name used for data transmission and reception by MQTT. [default: local] In actual transmission, &#x27;/&lt;terminal name&gt;&#x27; is added to the value specified here. e.g.) &#x27;local/VALUE&#x27;"/>
     </Node>
-    <Node name="node_SaveWavePCM_3" type="SaveWavePCM" x="1180" y="590">
+    <Node name="node_SaveWavePCM_3" type="SaveWavePCM" x="1240" y="660">
       <Parameter name="BASENAME" type="string" value="../data/sep_bf_" description="Basename of files. [default: sep_]"/>
       <Parameter name="ADVANCE" type="subnet_param" value="ADVANCE" description="The shift length beween adjacent frames (in samples)[default: 160]."/>
       <Parameter name="SAMPLING_RATE" type="subnet_param" value="SAMPLING_RATE" description="Sampling rate (in samples)[default: 16000]."/>
@@ -192,7 +192,7 @@
       <Parameter name="HARKMW.PROCESS" type="string" value="local" description="Specify a name that indicates the machine to be executed. [default: local]"/>
       <Parameter name="HARKMW.TOPIC" type="string" value="local" description="Specifies the prefix of the topic name used for data transmission and reception by MQTT. [default: local] In actual transmission, &#x27;/&lt;terminal name&gt;&#x27; is added to the value specified here. e.g.) &#x27;local/VALUE&#x27;"/>
     </Node>
-    <Node name="node_RosHarkMsgsSubscriber_1" type="RosHarkMsgsSubscriber" x="230" y="590">
+    <Node name="node_RosHarkMsgsSubscriber_1" type="RosHarkMsgsSubscriber" x="290" y="660">
       <Parameter name="STREAM_SELECTION" type="string" value="HarkSource" description="Selector of stream you want to realize. All other subscription will be disabled."/>
       <Parameter name="NB_CHANNELS" type="int" value="8" description="The number of input channels. Only used for no data period (Not important). [default: 8]"/>
       <Parameter name="FFT_LENGTH" type="int" value="512" description="FFT length in sample. Only used for no data period (Not important). [default: 512]"/>
@@ -213,6 +213,57 @@
       <Parameter name="HARKMW.PROCESS" type="string" value="local" description="Specify a name that indicates the machine to be executed. [default: local]"/>
       <Parameter name="HARKMW.TOPIC" type="string" value="local" description="Specifies the prefix of the topic name used for data transmission and reception by MQTT. [default: local] In actual transmission, &#x27;/&lt;terminal name&gt;&#x27; is added to the value specified here. e.g.) &#x27;local/VALUE&#x27;"/>
     </Node>
+    <Node name="node_PreEmphasis_1" type="PreEmphasis" x="680" y="940">
+      <Parameter name="LENGTH" type="int" value="512" description="window length in sample [default: 512]"/>
+      <Parameter name="SAMPLING_RATE" type="int" value="16000" description="Sampling rate in Hz [default: 16000]"/>
+      <Parameter name="PREEMCOEF" type="float" value="0.97" description="pre-emphasis coefficient [default: 0.97]"/>
+      <Parameter name="INPUT_TYPE" type="string" value="WAV" description="The domain to perform pre-emphasis [default: WAV]"/>
+      <Parameter name="HARKMW.PROCESS" type="string" value="local" description="Specify a name that indicates the machine to be executed. [default: local]"/>
+      <Parameter name="HARKMW.TOPIC" type="string" value="local" description="Specifies the prefix of the topic name used for data transmission and reception by MQTT. [default: local] In actual transmission, &#x27;/&lt;terminal name&gt;&#x27; is added to the value specified here. e.g.) &#x27;local/VALUE&#x27;"/>
+    </Node>
+    <Node name="node_MultiFFT_2" type="MultiFFT" x="900" y="940">
+      <Parameter name="LENGTH" type="int" value="512" description="FFT length in sample. [default: 512]"/>
+      <Parameter name="WINDOW" type="string" value="CONJ" description="A window function for FFT. WINDOW should be CONJ, HAMMING, RECTANGLE, or HANNING. [default: CONJ]"/>
+      <Parameter name="WINDOW_LENGTH" type="int" value="512" description="Window length of the window function. [default: 512]"/>
+      <Parameter name="HARKMW.PROCESS" type="string" value="local" description="Specify a name that indicates the machine to be executed. [default: local]"/>
+      <Parameter name="HARKMW.TOPIC" type="string" value="local" description="Specifies the prefix of the topic name used for data transmission and reception by MQTT. [default: local] In actual transmission, &#x27;/&lt;terminal name&gt;&#x27; is added to the value specified here. e.g.) &#x27;local/VALUE&#x27;"/>
+    </Node>
+    <Node name="node_MFCCExtraction_1" type="MFCCExtraction" x="1380" y="920">
+      <Parameter name="FBANK_COUNT" type="int" value="13" description="Number of filter banks of FBANK. [default: 24]"/>
+      <Parameter name="NUM_CEPS" type="int" value="12" description="Number of Cepstrum coefficients. [default: 12]"/>
+      <Parameter name="LIFTERING_COEF" type="int" value="22" description="The liftering coefficient used. [default: 22]"/>
+      <Parameter name="USE_POWER" type="bool" value="false" description="Use power feature if true. [default: false]"/>
+      <Parameter name="HARKMW.PROCESS" type="string" value="local" description="Specify a name that indicates the machine to be executed. [default: local]"/>
+      <Parameter name="HARKMW.TOPIC" type="string" value="local" description="Specifies the prefix of the topic name used for data transmission and reception by MQTT. [default: local] In actual transmission, &#x27;/&lt;terminal name&gt;&#x27; is added to the value specified here. e.g.) &#x27;local/VALUE&#x27;"/>
+    </Node>
+    <Node name="node_MelFilterBank_1" type="MelFilterBank" x="1120" y="900">
+      <Parameter name="LENGTH" type="subnet_param" value="LENGTH" description="Size of window length in sample. [default: 512]"/>
+      <Parameter name="SAMPLING_RATE" type="subnet_param" value="SAMPLING_RATE" description="Sampling rate in Hz.  [default: 16000]"/>
+      <Parameter name="CUTOFF" type="int" value="8000" description="Cutoff frequency in Hz. Mel-filterbanks are placed between 0 Hz and CUTOFF Hz. [default: 8000]"/>
+      <Parameter name="MIN_FREQUENCY" type="int" value="63" description="Minimum frequency (Hz) [default: 63]"/>
+      <Parameter name="MAX_FREQUENCY" type="int" value="8000" description="Maximum frequency (Hz) [default: 8000]"/>
+      <Parameter name="FBANK_COUNT" type="int" value="13" description="The number of Mel filter banks. [default: 13]"/>
+      <Parameter name="HARKMW.PROCESS" type="string" value="local" description="Specify a name that indicates the machine to be executed. [default: local]"/>
+      <Parameter name="HARKMW.TOPIC" type="string" value="local" description="Specifies the prefix of the topic name used for data transmission and reception by MQTT. [default: local] In actual transmission, &#x27;/&lt;terminal name&gt;&#x27; is added to the value specified here. e.g.) &#x27;local/VALUE&#x27;"/>
+    </Node>
+    <Node name="node_Delta_1" type="Delta" x="680" y="1070">
+      <Parameter name="FBANK_COUNT" type="int" value="13" description="The size of the input feature vector."/>
+      <Parameter name="HARKMW.PROCESS" type="string" value="local" description="Specify a name that indicates the machine to be executed. [default: local]"/>
+      <Parameter name="HARKMW.TOPIC" type="string" value="local" description="Specifies the prefix of the topic name used for data transmission and reception by MQTT. [default: local] In actual transmission, &#x27;/&lt;terminal name&gt;&#x27; is added to the value specified here. e.g.) &#x27;local/VALUE&#x27;"/>
+    </Node>
+    <Node name="node_FeatureRemover_1" type="FeatureRemover" x="880" y="1070">
+      <Parameter name="SELECTOR" type="object" value="&lt;Vector&lt;int&gt; 13&gt;" description="Component indices in a feature vector to remove. E.g. &amp;lt;Vector&amp;lt;int&amp;gt; 13&amp;gt; to remove 14th comopnent (The index start with 0)."/>
+      <Parameter name="HARKMW.PROCESS" type="string" value="local" description="Specify a name that indicates the machine to be executed. [default: local]"/>
+      <Parameter name="HARKMW.TOPIC" type="string" value="local" description="Specifies the prefix of the topic name used for data transmission and reception by MQTT. [default: local] In actual transmission, &#x27;/&lt;terminal name&gt;&#x27; is added to the value specified here. e.g.) &#x27;local/VALUE&#x27;"/>
+    </Node>
+    <Node name="node_SpeechRecognitionClient_1" type="SpeechRecognitionClient" x="680" y="1160">
+      <Parameter name="MFM_ENABLED" type="bool" value="true" description="MFM is enbaled if true. [default: true]"/>
+      <Parameter name="HOST" type="string" value="127.0.0.1" description="Hostname or IP of Julius/Julian server. [default: 127.0.0.1]"/>
+      <Parameter name="PORT" type="int" value="5530" description="Port number of Julius/Julian server. [default: 5530]"/>
+      <Parameter name="SOCKET_ENABLED" type="bool" value="true" description="send data via socket if true. [default: true]"/>
+      <Parameter name="HARKMW.PROCESS" type="string" value="local" description="Specify a name that indicates the machine to be executed. [default: local]"/>
+      <Parameter name="HARKMW.TOPIC" type="string" value="local" description="Specifies the prefix of the topic name used for data transmission and reception by MQTT. [default: local] In actual transmission, &#x27;/&lt;terminal name&gt;&#x27; is added to the value specified here. e.g.) &#x27;local/VALUE&#x27;"/>
+    </Node>
     <Link from="node_AudioStreamFromMic_1" output="AUDIO" to="node_MatrixToMap_1" input="INPUT"/>
     <Link from="node_MatrixToMap_1" output="OUTPUT" to="node_SaveWavePCM_1" input="INPUT"/>
     <Link from="node_AudioStreamFromMic_1" output="AUDIO" to="node_MultiFFT_1" input="INPUT"/>
@@ -227,12 +278,23 @@
     <Link from="node_BeamForming_1" output="OUTPUT" to="node_Synthesize_2" input="INPUT"/>
     <Link from="node_RosHarkMsgsSubscriber_1" output="SRCOUT" to="node_GHDSS_1" input="INPUT_SOURCES"/>
     <Link from="node_RosHarkMsgsSubscriber_1" output="SRCOUT" to="node_BeamForming_1" input="INPUT_SOURCES"/>
+    <Link from="node_Synthesize_2" output="OUTPUT" to="node_PreEmphasis_1" input="INPUT"/>
+    <Link from="node_PreEmphasis_1" output="OUTPUT" to="node_MultiFFT_2" input="INPUT"/>
+    <Link from="node_MultiFFT_2" output="OUTPUT" to="node_MelFilterBank_1" input="INPUT"/>
+    <Link from="node_MultiFFT_2" output="OUTPUT" to="node_MFCCExtraction_1" input="SPECTRUM"/>
+    <Link from="node_MelFilterBank_1" output="OUTPUT" to="node_MFCCExtraction_1" input="FBANK"/>
+    <Link from="node_MFCCExtraction_1" output="OUTPUT" to="node_Delta_1" input="INPUT"/>
+    <Link from="node_Delta_1" output="OUTPUT" to="node_FeatureRemover_1" input="INPUT"/>
+    <Link from="node_FeatureRemover_1" output="OUTPUT" to="node_SpeechRecognitionClient_1" input="FEATURES"/>
+    <Link from="node_FeatureRemover_1" output="OUTPUT" to="node_SpeechRecognitionClient_1" input="MASKS"/>
+    <Link from="node_RosHarkMsgsSubscriber_1" output="SRCOUT" to="node_SpeechRecognitionClient_1" input="SOURCES"/>
     <NetOutput name="NOT_EOF" node="node_AudioStreamFromMic_1" terminal="NOT_EOF" object_type="bool" description="Always true, this is for &quot;condition&quot; setting"/>
     <NetOutput name="bkgd_noise" node="node_RosStdMsgsPublisher_1" terminal="OUTPUT" object_type="ObjectRef" description="This is a dummy output. It has no purpose other than activating this node."/>
     <NetOutput name="raw_wave" node="node_SaveWavePCM_1" terminal="OUTPUT" object_type="Map&amp;lt;int,ObjectRef&amp;gt;" description="The same as input."/>
     <NetOutput name="sep_ghdss_wave" node="node_SaveWavePCM_2" terminal="OUTPUT" object_type="Map&amp;lt;int,ObjectRef&amp;gt;" description="The same as input."/>
-    <NetCondition name="CONDITION" node="node_Iterate_1" terminal="OUTPUT"/>
     <NetOutput name="sep_bf_wav" node="node_SaveWavePCM_3" terminal="OUTPUT" object_type="any" description="outputsadded by the user"/>
     <NetOutput name="sub_src" node="node_RosHarkMsgsSubscriber_1" terminal="SRCOUT" object_type="Vector&amp;lt;ObjectRef&amp;gt;" description="Source output port when STREAM_SELECTION=HarkSource or HarkSrcWave or HarkSrcFFT or HarkSrcFeature or HarkSrcFeatureMFM"/>
+    <NetCondition name="CONDITION" node="node_Iterate_1" terminal="OUTPUT"/>
+    <NetOutput name="recog" node="node_SpeechRecognitionClient_1" terminal="OUTPUT" object_type="Vector&amp;lt;ObjectRef&amp;gt;" description="The same as SOURCES."/>
   </Network>
 </Document>
