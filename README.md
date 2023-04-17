@@ -5,6 +5,10 @@ A lot of this will be application-specific, but if you have specific questions f
 
 LAST UPDATED: March 2023
 
+## Prerequisites
+Install Kaldi speech recognition network from https://hark.jp/download/samples/ (use IROS 2018 practice2)
+TODO write a script for this
+
 ## Current hardware setup
 Azure Kinect microphone array
 
