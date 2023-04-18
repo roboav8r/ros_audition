@@ -6,14 +6,27 @@ A lot of this will be application-specific, but if you have specific questions f
 LAST UPDATED: March 2023
 
 ## Prerequisites
-Install Kaldi speech recognition network from https://hark.jp/download/samples/ (use IROS 2018 practice2)
-TODO write a script for this
+Down Kaldi speech recognition network from https://hark.jp/download/samples/ (use IROS 2018 practice2)
+Extract
+move kaldi_conf to hri_audition
+TODO write scripts for these
+
+### Package Dependencies
+sudo apt install kaldidecoder-hark
+
+TODO add these to package.xml and CMakeLists
 
 ## Current hardware setup
 Azure Kinect microphone array
 
+
 ## Usage
-Dummy ROS message to send for HARK sound source locations:
+
+### Speech recognition
+python3 src/hri_audition/scripts/Kaldi.py
+
+
+### Dummy ROS message to send for HARK sound source locations:
 ```
 rostopic pub -r 10 /speaker_source_loc hark_msgs/HarkSource "header:
   seq: 0
