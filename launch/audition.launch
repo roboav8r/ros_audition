@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<launch>
+
+    <node name="kaldi" pkg="hri_audition" type="kaldi.sh" output="screen" required="true" />
+
+    <!-- <node name="hark_data_stream_rcvr" pkg="hri_audition" type="HarkDataStreamReceiver.py" output="screen" required="true" /> -->
+
+</launch>
