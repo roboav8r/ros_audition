@@ -1,4 +1,3 @@
 #!/bin/bash
-gnome-terminal --title=Python -- python3 -q
-
-# python3 python/Kaldi.py
+cd $1;
+gnome-terminal --title="Kaldi" -- python3 scripts/Kaldi.py
