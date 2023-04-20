@@ -42,7 +42,7 @@
       <Parameter name="A_MATRIX" type="subnet_param" value="A_MATRIX" description="subnet_param"/>
       <Parameter name="MAXNUM_OUT_PEAKS" type="subnet_param" value="MAXNUM_OUT_PEAKS" description="subnet_param"/>
     </Node>
-    <Node name="node_AudioStreamFromMic_1" type="AudioStreamFromMic" x="100" y="100">
+    <Node name="node_AudioStreamFromMic_1" type="AudioStreamFromMic" x="140" y="100">
       <Parameter name="LENGTH" type="subnet_param" value="LENGTH" description="The frame length of each channel (in samples) [default: 512]."/>
       <Parameter name="ADVANCE" type="subnet_param" value="ADVANCE" description="The shift length beween adjacent frames (in samples)[default: 160]."/>
       <Parameter name="CHANNEL_COUNT" type="subnet_param" value="CHANNEL_COUNT" description="The number of channels."/>
@@ -65,9 +65,9 @@
     <Link from="node_MultiFFT_1" output="OUTPUT" to="node_sub_separation_1" input="SPEC"/>
     <Link from="node_sub_localization_1" output="OUTPUT" to="node_sub_separation_1" input="SRC_INFO"/>
     <Link from="node_sub_separation_1" output="POSTFLT_SPEC" to="node_sub_recognition_1" input="SPEC"/>
-    <Link from="node_AudioStreamFromMic_1" output="AUDIO" to="node_MultiFFT_1" input="INPUT"/>
     <Link from="node_SourceSelectorByDirection_1" output="OUTPUT" to="node_sub_recognition_1" input="SOURCES"/>
     <Link from="node_sub_localization_1" output="OUTPUT" to="node_SourceSelectorByDirection_1" input="SOURCES"/>
+    <Link from="node_AudioStreamFromMic_1" output="AUDIO" to="node_MultiFFT_1" input="INPUT"/>
     <NetOutput name="ASR-A" node="node_sub_recognition_1" terminal="ASR-A" object_type="any" description="Dynamic"/>
     <NetOutput name="OUTPUT" node="node_sub_separation_1" terminal="OUTPUT" object_type="any" description="Dynamic"/>
     <NetOutput name="HSDS" node="node_sub_localization_1" terminal="HSDS" object_type="any" description="Dynamic"/>

@@ -168,6 +168,7 @@ install(PROGRAMS
   scripts/kaldi.sh
   scripts/hark_data_rcvr.sh
   scripts/hark.sh
+  scripts/hark_stream.sh
   scripts/params.sh
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}  
 )

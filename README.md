@@ -42,6 +42,9 @@ src:
 ```
 
 ## TODO / Future Work
+
+Cleanup & remove older files
+
 General usability
 
 Add hardware:
