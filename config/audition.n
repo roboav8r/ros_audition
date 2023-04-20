@@ -2,7 +2,7 @@
 <?xml version="1.0"?>
 <Document>
   <Network type="subnet" name="MAIN">
-    <Node name="node_MAIN_LOOP_1" type="MAIN_LOOP" x="530" y="100">
+    <Node name="node_MAIN_LOOP_1" type="MAIN_LOOP" x="100" y="100">
       <Parameter name="LENGTH" type="subnet_param" value="int:ARG7" description="The frame length of each channel (in samples) [default: 512]."/>
       <Parameter name="ADVANCE" type="subnet_param" value="int:ARG8" description="The shift length beween adjacent frames (in samples)[default: 160]."/>
       <Parameter name="DEVICETYPE" type="subnet_param" value="string:ARG1" description="subnet_param"/>
@@ -268,7 +268,7 @@
       <Parameter name="HARKMW.TOPIC" type="string" value="local" description="Specifies the prefix of the topic name used for data transmission and reception by MQTT. [default: local] In actual transmission, &#x27;/&lt;terminal name&gt;&#x27; is added to the value specified here. e.g.) &#x27;local/VALUE&#x27;"/>
     </Node>
     <Node name="node_SourceTracker_1" type="SourceTracker" x="440" y="100">
-      <Parameter name="THRESH" type="float" value="25" description="Power threshold for localization results. A localization result with higher power than THRESH is tracked, otherwise ignored."/>
+      <Parameter name="THRESH" type="float" value="23" description="Power threshold for localization results. A localization result with higher power than THRESH is tracked, otherwise ignored."/>
       <Parameter name="PAUSE_LENGTH" type="float" value="1200" description="Life duration of source in ms. When any localization result for a source is found for more than PAUSE_LENGTH / 10 iterations, the source is terminated. [default: 800]"/>
       <Parameter name="MIN_SRC_INTERVAL" type="float" value="20" description="Source interval threshold in degree. When the angle between a localization result and a source is smaller than MIN_SRC_INTERVAL, the same ID is given to the localization result. [default: 20]"/>
       <Parameter name="MIN_ID" type="int" value="0" description="Minimum ID of source locations. MIN_ID should be greater than 0 or equal."/>

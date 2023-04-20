@@ -43,7 +43,6 @@ src:
 
 ## TODO / Future Work
 General usability
-- ROS launch files for sensors and HARK network
 
 Add hardware:
 - 16soundsUSB array - use with Kinect array?
@@ -52,3 +51,6 @@ Functions I am working on implementing:
 - Speaker localization provided by separate LiDAR/Visual ROS tracking node to HARK network
 - Automatic Speech Recognition using Kaldi, Julius, or CMUSphinx
 - Background noise classification/scene estimation with Python node
+
+Debugging/improves
+- Accept channel_selector as input argument (e.g. <Vector<int> 0 1 2 ... >). Currently, HARK can cast input args as int:ARG#, string:ARG#, or float:ARG#, but not object:ARG# datatype (see MAIN_LOOP in the HARK network and HARK cookbook section 7.1)
