@@ -13,6 +13,7 @@ To use openSMILE feature extraction, build from source. In your home directory:
 cd ~
 sudo apt-get install portaudio19-dev
 sudo apt-get install libopencv*
+sudo apt-get install gnuplot-nox
 git clone https://github.com/audeering/opensmile.git
 cd opensmile/
 ```
