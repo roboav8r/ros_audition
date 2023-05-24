@@ -6,10 +6,38 @@ A lot of this will be application-specific, but if you have specific questions f
 LAST UPDATED: March 2023
 
 ## Prerequisites
-Down Kaldi speech recognition network from https://hark.jp/download/samples/ (use IROS 2018 practice2)
+
+### openSMILE
+To use openSMILE feature extraction, build from source. In your home directory:
+```
+cd ~
+sudo apt-get install portaudio19-dev
+sudo apt-get install libopencv*
+git clone https://github.com/audeering/opensmile.git
+cd opensmile/
+```
+Open `build_flags.sh` and change the following:
+```
+    -DWITH_PORTAUDIO=ON
+    -DWITH_FFMPEG=ON
+    -DWITH_OPENCV=ON
+```
+Back at the command line, run the build script:
+```
+./build.sh
+cd build
+sudo make install
+```
+Note: If you are using OpenCV 4 and are getting build errors, make the changes here: https://github.com/audeering/opensmile/issues/17#issuecomment-847654469 
+
+
+### Kaldi
+Download Kaldi speech recognition network from https://hark.jp/download/samples/ (use IROS 2018 practice2)
 Extract
+
 move kaldi_conf to hri_audition
-TODO write scripts for these
+
+TODO write scripts for these ^^
 
 ### Package Dependencies
 sudo apt install kaldidecoder-hark
