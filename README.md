@@ -3,7 +3,7 @@ A repo for audition and auditory analysis software for my Ph.D. research in huma
 
 A lot of this will be application-specific, but if you have specific questions feel free to reach out to me.
 
-LAST UPDATED: March 2023
+LAST UPDATED: May 2023
 
 ## Prerequisites
 
@@ -50,6 +50,21 @@ Azure Kinect microphone array
 
 
 ## Usage
+
+### openSMILE signal acquisition
+```
+SMILExtract -C config/mono_microphone.conf # Run a mono microphone array, e.g. from webcam
+SMILExtract -C config/16soundsUSB.conf # Run 16soundsUSB device
+SMILExtract -C config/16soundsUSB.conf -listDevices 1 # If you get device errors, check device indices
+```
+
+### openSMILE spectrogram generation
+When you run `16soundsUSB.conf`, it will automatically generate `spectrogram.csv` in the directory where you ran SMILExtract (e.g. ./hri_audition/)
+To generate the spectrogram.png from the .csv:
+```
+roscd hri_audition
+./scripts/plotspectrogram.plt
+```
 
 ### Speech recognition
 python3 src/hri_audition/scripts/Kaldi.py
