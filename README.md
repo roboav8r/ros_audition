@@ -14,22 +14,16 @@ cd ~
 sudo apt-get install portaudio19-dev
 sudo apt-get install libopencv*
 sudo apt-get install gnuplot-nox
-git clone https://github.com/audeering/opensmile.git
+git clone https://github.com/roboav8r/opensmile.git
 cd opensmile/
 ```
-Open `build_flags.sh` and change the following:
-```
-    -DWITH_PORTAUDIO=ON
-    -DWITH_FFMPEG=ON
-    -DWITH_OPENCV=ON
-```
-Back at the command line, run the build script:
+Back at the command line, run the build script and install:
 ```
 ./build.sh
 cd build
 sudo make install
 ```
-Note: If you are using OpenCV 4 and are getting build errors, make the changes here: https://github.com/audeering/opensmile/issues/17#issuecomment-847654469 
+Note: This is designed to use OpenCV version 4. If you are getting errors, see this issue: https://github.com/audeering/opensmile/issues/17#issuecomment-847654469 
 
 
 ### Kaldi
