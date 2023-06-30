@@ -50,14 +50,16 @@ Azure Kinect microphone array
 SMILExtract -C config/mono_microphone.conf # Run a mono microphone array, e.g. from webcam
 SMILExtract -C config/16soundsUSB.conf # Run 16soundsUSB device
 SMILExtract -C config/16soundsUSB.conf -listDevices 1 # If you get device errors, check device indices
+SMILExtract -C config/16soundsUSB.conf -device 11
 ```
 
 ### openSMILE spectrogram generation
 When you run `16soundsUSB.conf`, it will automatically generate `spectrogram.csv` in the directory where you ran SMILExtract (e.g. ./hri_audition/)
 To generate the spectrogram.png from the .csv:
 ```
-roscd hri_audition
-./scripts/plotspectrogram.plt
+cd ~/opensmile/scripts/gnuplot # This should be my fork located at https://github.com/roboav8r/opensmile
+cp ~/mmhri_ws/src/hri_audition/spectrogram.csv ../..
+./plot4spectrogram.plt 
 ```
 
 ### Speech recognition
@@ -77,6 +79,12 @@ exist_src_num: 1
 src:
 - {id: 0, power: 1.0, x: 0.5, y: 0.0, z: 0.0, azimuth: 0.0, elevation: 0.0}" 
 
+```
+
+## Other useful info
+### Getting sound card sampling rate info
+```
+arecord -f dat -r 48000 -D plughw:2,0 -d 5 test.wav # Verify card supports 48000 kHz sample rate
 ```
 
 ## TODO / Future Work
