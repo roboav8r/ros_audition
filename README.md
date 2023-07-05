@@ -5,6 +5,10 @@ A lot of this will be application-specific, but if you have specific questions f
 
 LAST UPDATED: March 2023
 
+## Prerequisites
+Install Julius speech recognition engine:
+https://github.com/julius-speech/julius
+
 ## Current hardware setup
 Azure Kinect microphone array
 

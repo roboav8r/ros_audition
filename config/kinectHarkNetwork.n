@@ -20,6 +20,7 @@
     <NetOutput name="sep_ghdss_wave" node="node_MAIN_LOOP_1" terminal="sep_ghdss_wave" object_type="any" description="Dynamic"/>
     <NetOutput name="sep_bf_wav" node="node_MAIN_LOOP_1" terminal="sep_bf_wav" object_type="any" description="Dynamic"/>
     <NetOutput name="sub_src" node="node_MAIN_LOOP_1" terminal="sub_src" object_type="any" description="Dynamic"/>
+    <NetOutput name="recog" node="node_MAIN_LOOP_1" terminal="recog" object_type="Vector&amp;lt;ObjectRef&amp;gt;" description="The same as SOURCES."/>
   </Network>
   <Network type="iterator" name="MAIN_LOOP">
     <Node name="node_Iterate_1" type="Iterate" x="160" y="100">
@@ -34,7 +35,7 @@
       <Parameter name="SAMPLING_RATE" type="subnet_param" value="SAMPLING_RATE" description="Sampling rate (Hz) [default: 16000]."/>
       <Parameter name="DEVICETYPE" type="string" value="ALSA" description="Device type [default: WS]."/>
       <Parameter name="GAIN" type="string" value="0dB" description="capture gain (dB)  [default: 0dB]."/>
-      <Parameter name="DEVICE" type="string" value="plughw:2,0" description="Device name or IP address [default: 127.0.0.1]"/>
+      <Parameter name="DEVICE" type="string" value="plughw:4,0" description="Device name or IP address [default: 127.0.0.1]"/>
       <Parameter name="HARKMW.PROCESS" type="string" value="local" description="Specify a name that indicates the machine to be executed. [default: local]"/>
       <Parameter name="HARKMW.TOPIC" type="string" value="local" description="Specifies the prefix of the topic name used for data transmission and reception by MQTT. [default: local] In actual transmission, &#x27;/&lt;terminal name&gt;&#x27; is added to the value specified here. e.g.) &#x27;local/VALUE&#x27;"/>
     </Node>
@@ -257,7 +258,7 @@
       <Parameter name="HARKMW.TOPIC" type="string" value="local" description="Specifies the prefix of the topic name used for data transmission and reception by MQTT. [default: local] In actual transmission, &#x27;/&lt;terminal name&gt;&#x27; is added to the value specified here. e.g.) &#x27;local/VALUE&#x27;"/>
     </Node>
     <Node name="node_SpeechRecognitionClient_1" type="SpeechRecognitionClient" x="680" y="1160">
-      <Parameter name="MFM_ENABLED" type="bool" value="true" description="MFM is enbaled if true. [default: true]"/>
+      <Parameter name="MFM_ENABLED" type="bool" value="false" description="MFM is enbaled if true. [default: true]"/>
       <Parameter name="HOST" type="string" value="127.0.0.1" description="Hostname or IP of Julius/Julian server. [default: 127.0.0.1]"/>
       <Parameter name="PORT" type="int" value="5530" description="Port number of Julius/Julian server. [default: 5530]"/>
       <Parameter name="SOCKET_ENABLED" type="bool" value="true" description="send data via socket if true. [default: true]"/>
@@ -294,7 +295,7 @@
     <NetOutput name="sep_ghdss_wave" node="node_SaveWavePCM_2" terminal="OUTPUT" object_type="Map&amp;lt;int,ObjectRef&amp;gt;" description="The same as input."/>
     <NetOutput name="sep_bf_wav" node="node_SaveWavePCM_3" terminal="OUTPUT" object_type="any" description="outputsadded by the user"/>
     <NetOutput name="sub_src" node="node_RosHarkMsgsSubscriber_1" terminal="SRCOUT" object_type="Vector&amp;lt;ObjectRef&amp;gt;" description="Source output port when STREAM_SELECTION=HarkSource or HarkSrcWave or HarkSrcFFT or HarkSrcFeature or HarkSrcFeatureMFM"/>
-    <NetCondition name="CONDITION" node="node_Iterate_1" terminal="OUTPUT"/>
     <NetOutput name="recog" node="node_SpeechRecognitionClient_1" terminal="OUTPUT" object_type="Vector&amp;lt;ObjectRef&amp;gt;" description="The same as SOURCES."/>
+    <NetCondition name="CONDITION" node="node_Iterate_1" terminal="OUTPUT"/>
   </Network>
 </Document>
