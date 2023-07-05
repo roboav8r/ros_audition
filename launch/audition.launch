@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<launch>
+
+    <!-- Device and audition parameters -->
+    <!-- TODO put these in kinect.yaml -->
+    <arg name="device_type" default="ALSA" />
+    <arg name="device" default="plughw:2,0" />
+    <arg name="channel_count" default="7" />
+    <arg name="max_peaks" default="6" />
+    <arg name="channel_select" default="&lt;Vector&lt;int&gt;&#160;0&#160;1&#160;2&#160;3&#160;4&#160;5&#160;6&gt;" />
+    <arg name="a_matrix_file" default="./kinect/tf.zip"/>
+    <arg name="tf_conj_file" default="./kinect/tf.zip"/>
+    <arg name="length" default="512" />
+    <arg name="advance" default="160" />
+    <arg name="mode" default="realtime" /> <!-- options: realtime, stream -->
+
+    <!-- ROS parameters -->
+    <arg name="node_name" default="hark_node" />
+    <arg name="audio_topic_name" default="hark_wave" />
+    <arg name="audio_frame_id" default="kinect_frame" />
+
+
+    <group if="$(eval mode=='realtime')">
+        <node name="kaldi" pkg="hri_audition" type="kaldi.sh" args="$(find hri_audition)" output="screen" required="false" />
+        <node name="hark_data_rcvr" pkg="hri_audition" type="hark_data_rcvr.sh" args="$(find hri_audition)" output="screen" required="false" />
+        <node name="hark" pkg="hri_audition" type="hark.sh" args="$(find hri_audition) $(arg device_type) $(arg device) $(arg channel_count) $(arg max_peaks) $(arg a_matrix_file) $(arg tf_conj_file) $(arg length) $(arg advance) $(arg channel_select)" output="screen" />
+        <node name="params" pkg="hri_audition" type="params.sh" args="$(find hri_audition)" output="screen" />
+    </group>
+
+    <group if="$(eval mode=='stream')">
+        <node name="hark" pkg="hri_audition" type="hark_stream.sh" args="$(find hri_audition) $(arg device_type) $(arg device) $(arg channel_count) $(arg length) $(arg advance) $(arg channel_select) $(arg node_name) $(arg audio_topic_name) $(arg audio_frame_id)" output="screen" />
+    </group>
+
+</launch>
