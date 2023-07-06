@@ -46,3 +46,10 @@ TODO add package deps to package.xml and CMakeLists and rosdep
 
 Add hardware:
 - 16soundsUSB array - use with Kinect array simultaneously?
+
+CAPTURE
+- add args to config/launch files
+
+FEAT EXT
+- add option to publish buffer (default = false)
+- make n_bytes in buf_to_float a param
