@@ -45,7 +45,7 @@ class AudioFeatExtNode:
 
     def extract_features(self):
         self.feature_msg.ZCR = torch.sum(torch.diff(self.frame > 0),1)/self.frame_length
-        self.feature_msg.RMS = 2.0
+        self.feature_msg.RMS = torch.sqrt(torch.sum(torch.square(self.frame))/self.frame_length)
         self.feature_msg.pitch = 3.0
         self.feature_msg.HNR = 4.0
         self.feature_msg.MFCC = [1., 2., 3., 4., 5., 6., 7., 8., 9., 10., 11., 12.]
