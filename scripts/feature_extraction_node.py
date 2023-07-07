@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import torch
+import torchaudio
 import librosa
 import rospy
 import numpy as np
@@ -16,6 +17,7 @@ class AudioFeatExtNode:
 
         # Get parameters
         self.n_channels = rospy.get_param("n_channels")
+        self.channel_idx = rospy.get_param("channel_idx")
         self.frame_length = rospy.get_param("frame_length")
         self.hop_length = rospy.get_param("hop_length")
 
@@ -46,7 +48,7 @@ class AudioFeatExtNode:
     def extract_features(self):
         self.feature_msg.ZCR = torch.sum(torch.diff(self.frame > 0),1)/self.frame_length
         self.feature_msg.RMS = torch.sqrt(torch.sum(torch.square(self.frame))/self.frame_length)
-        self.feature_msg.pitch = 3.0
+        self.feature_msg.pitch = 3.0 #torchaudio.functional.detect_pitch_frequency(self.frame[self.channel_idx,:], self.sample_rate)
         self.feature_msg.HNR = 4.0
         self.feature_msg.MFCC = [1., 2., 3., 4., 5., 6., 7., 8., 9., 10., 11., 12.]
 
