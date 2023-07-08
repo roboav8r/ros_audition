@@ -1,22 +1,24 @@
-# hri_audition (ROS branch)
+# hri_audition (ROS1 branch)
 A repo for audition and auditory analysis software for my Ph.D. research in human-robot interaction and human-robot teaming.
 
-A lot of this will be application-specific, but if you have specific questions feel free to reach out to me.
+This repo currently includes progress towards a demo which can perform speaker recognition and sound scene recognition using monochannel audio.
 
-LAST UPDATED: May 2023
+For questions, issues, and suggestions feel free to reach out to me or raise an issue/feature request!
 
-## Prerequisites
+LAST UPDATED: July 2023
+
+# Prerequisites
 This assumes you are using Ubuntu 20.04 with ROS Noetic installed.
 
-### Package Dependencies
+## Package Dependencies
 Torch, torchaudio
 
-## Current hardware setup
-Azure Kinect microphone array
+## Hardware setup
+For the speaker recognition/sound scene classification demo, all you need is a monochannel webcam microphone.
 
-## Usage
+# Usage
 
-### One-time setup
+## One-time setup
 First, find the device you want to use for audition. At a terminal, `arecord -l`
 ```
 **** List of CAPTURE Hardware Devices ****
@@ -31,25 +33,25 @@ Next, create a .yaml file in `/config/`. I want to use the Kinect at **card 2**,
 
 Update the launch file to load this file as appropriate.
 
-### Speech recognition
+## Running the speaker recognition demo
+TODO
+## Running the sound scene classification demo
+TODO
 
+# References
+Real-time Speech and Music Classification by Large Audio Feature Space Extraction by Florian Eyben.
+https://link.springer.com/book/10.1007/978-3-319-27299-3
 
-## Other useful info
-### Getting sound card sampling rate info
-```
-arecord -f dat -r 48000 -D plughw:2,0 -d 5 test.wav # Verify card supports 48000 kHz sample rate
-```
+# Future Work
+## Functional additions
+- Add package deps to package.xml, add rosdep instructions
+- Add Azure Kinect and 16soundsUSB array config files
+- Launch multiple audio acquisition use with Kinect array simultaneously (multiple array acquisition)?
 
-## TODO / Future Work
-
-TODO add package deps to package.xml and CMakeLists and rosdep
-
-Add hardware:
-- 16soundsUSB array - use with Kinect array simultaneously?
-
+## Improvements
 CAPTURE
 - add args to config/launch files
 
-FEAT EXT
-- add option to publish buffer (default = false)
+feat_ext_node
+- add option to publish node (default = false)
 - make n_bytes in buf_to_float a param
