@@ -7,7 +7,6 @@ import rospy
 import numpy as np
 
 from audio_common_msgs.msg import AudioInfo, AudioDataStamped
-# from std_msgs.msg import String
 from hri_msgs.msg import AudioFeatures
 
 class AudioFeatExtNode:
