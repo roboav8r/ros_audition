@@ -46,6 +46,33 @@ Next, update the .yaml file in `/config/`. For example, I want to use the Kinect
 Update the launch file to load this file as appropriate.
 
 # Usage
+## Recording training data for speaker identification
+To record wave (time-series) data to train the speaker recognition system, first start the microphone. At a properly sourced terminal: 
+```
+roslaunch hri_audition kinect_example.launch
+```
+
+Now, record the ROS bagfile and save it to the data directory with an appropriate name. At a terminal:
+```
+rosbag record /audio/audio_stamped audio/audio_info -O 'data/people/<person's name>_<number of the bagfile>' # For example...
+rosbag record /audio/audio_stamped audio/audio_info -O 'data/people/john_0'
+```
+Speak for approximately 60 seconds, using the [prompt](prompt.md) if needed.
+Press `ctrl-c` to stop recording.
+
+## Recording training data for scene identification
+To record wave (time-series) data to train the scene recognition system, first start the microphone. At a properly sourced terminal: 
+```
+roslaunch hri_audition kinect_example.launch
+```
+
+Now, record the ROS bagfile and save it to the data directory with an appropriate name. At a terminal:
+```
+rosbag record /audio/audio_stamped audio/audio_info -O 'data/scenes/<scene name>_<number of the bagfile>' # For example...
+rosbag record /audio/audio_stamped audio/audio_info -O 'data/scenes/lab_0'
+```
+Press `ctrl-c` to stop recording.
+
 ## Running the speaker recognition demo
 TODO
 ## Running the sound scene classification demo
