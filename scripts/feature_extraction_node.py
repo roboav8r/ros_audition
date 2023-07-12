@@ -26,11 +26,20 @@ class AudioFeatExtNode:
         # Torch/CUDA params
         self.torch_device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
+        # MFCC transform params
+        self.n_mfcc = 12 # Only want MFCCs 1-13, but we will compute 40
+        self.mfcc_args = {"n_fft": self.frame_length, "hop_length": 2*self.frame_length, "n_mels": 40}
+        self.mfcc_transform = torchaudio.transforms.MFCC(self.sample_rate, n_mfcc=40, melkwargs=self.mfcc_args)
+        self.mfcc_data = torch.zeros([1,self.n_mfcc])
+        self.mfcc_data.to(self.torch_device)
+
         # Initialize member variables/methods
         self.frame = torch.zeros([self.n_channels,self.frame_length])
         self.hop = torch.zeros([self.n_channels,self.hop_length])
+        self.pitchdata = torch.zeros([1,1])
         self.frame.to(self.torch_device)
         self.hop.to(self.torch_device)
+        self.pitchdata.to(self.torch_device)
         self.feature_msg = AudioFeatures()
 
         # Set up ROS subs and pubs
@@ -38,11 +47,15 @@ class AudioFeatExtNode:
         self.publisher = rospy.Publisher('audio_features', AudioFeatures, queue_size=10)
 
     def extract_features(self):
-        self.feature_msg.ZCR = torch.sum(torch.diff(self.frame > 0),1)/self.frame_length
-        self.feature_msg.RMS = torch.sqrt(torch.sum(torch.square(self.frame))/self.frame_length)
-        self.feature_msg.pitch = 3.0 #torchaudio.functional.detect_pitch_frequency(self.frame[self.channel_idx,:], self.sample_rate)
+        self.feature_msg.ZCR = (torch.sum(torch.diff(self.frame > 0),1)/self.frame_length)[0].item()
+        self.feature_msg.RMS = torch.sqrt(torch.sum(torch.square(self.frame))/self.frame_length).item()
+        # self.pitchdata = torchaudio.functional.detect_pitch_frequency(waveform=self.frame, sample_rate=self.sample_rate, frame_time=self.frame_length/self.sample_rate, win_length=1)
+        # print(self.pitchdata)
+        # self.feature_msg.pitch = torch.sum(self.pitchdata)/self.pitchdata.size()[1]
+        self.feature_msg.pitch =3.0
         self.feature_msg.HNR = 4.0
-        self.feature_msg.MFCC = [1., 2., 3., 4., 5., 6., 7., 8., 9., 10., 11., 12.]
+        self.mfcc_data = self.mfcc_transform(self.frame)[0][1:self.n_mfcc+1,:]
+        self.feature_msg.MFCC = self.mfcc_data
 
     def audio_data_callback(self, audio_data):
         # Save incoming audio data to hop tensor, casting from bytes type as needed

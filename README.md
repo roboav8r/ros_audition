@@ -56,16 +56,16 @@ Real-time Speech and Music Classification by Large Audio Feature Space Extractio
 https://link.springer.com/book/10.1007/978-3-319-27299-3
 
 # Future Work
+
 ## Functional additions
-- Add package deps to package.xml, add rosdep instructions
-- Add Azure Kinect and 16soundsUSB array config files
+- Add multichannel support in acquisition / feat extraction
+- Add A16soundsUSB array config files
 - Launch multiple audio acquisition use with Kinect array simultaneously (multiple array acquisition)?
 
-## Improvements
-CAPTURE
-- Multichannel audio from azure kinect (currently mono)
+## Due Diligence
+Validate feature sets - develop test cases (e.g. generated signal with known features)
 
+## Improvements to existing functions
 feat_ext_node
-- add option to publish node (default = false)
-- make n_bytes in buf_to_float a param
-- Multichannel support
+- add option to publish frame (default = false)
+- make n_bytes in buf_to_float a param based on audio_info
