@@ -36,7 +36,6 @@ class AudioFeatExtNode:
         self.publisher = rospy.Publisher('audio_features', AudioFeatures, queue_size=10)
 
     def audio_info_callback(self, audio_info):
-        # Do something with the audio info message
         self.channels = audio_info.channels
         self.sample_rate = audio_info.sample_rate
         self.sample_fmt = audio_info.sample_format

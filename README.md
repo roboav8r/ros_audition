@@ -16,7 +16,19 @@ Torch, torchaudio
 ## Hardware setup
 For the speaker recognition/sound scene classification demo, all you need is a monochannel webcam microphone.
 
-# Usage
+# Installation
+Make a catkin workspace, clone the repo, install dependencies, and build. At a terminal:
+```
+cd ~
+mkdir -p my_audio_ws/src
+cd my_audio_ws/src/
+git clone https://github.com/roboav8r/hri_audition.git
+cd ~/my_audio_ws
+rosdep install --from-paths src --ignore-src -r -y 
+python3 -m pip install -r requirements.txt
+catkin build
+source devel/setup.bash
+```
 
 ## One-time setup
 First, find the device you want to use for audition. At a terminal, `arecord -l`
@@ -29,10 +41,11 @@ card 2: Array [Azure Kinect Microphone Array], device 0: USB Audio [USB Audio]
   Subdevices: 1/1
   Subdevice #0: subdevice #0
 ```
-Next, create a .yaml file in `/config/`. I want to use the Kinect at **card 2**, hence my `kinect_torch.yaml` file has a line `alsadevnum: 2` to specify the device parameter.
+Next, update the .yaml file in `/config/`. For example, I want to use the Kinect at **card 2**, hence my `kinect_example.yaml` file has a line `alsadevnum: 1` to specify the device parameter.
 
 Update the launch file to load this file as appropriate.
 
+# Usage
 ## Running the speaker recognition demo
 TODO
 ## Running the sound scene classification demo
@@ -50,8 +63,9 @@ https://link.springer.com/book/10.1007/978-3-319-27299-3
 
 ## Improvements
 CAPTURE
-- add args to config/launch files
+- Multichannel audio from azure kinect (currently mono)
 
 feat_ext_node
 - add option to publish node (default = false)
 - make n_bytes in buf_to_float a param
+- Multichannel support
