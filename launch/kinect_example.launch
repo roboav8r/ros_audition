@@ -4,7 +4,6 @@
     <!-- Kinect-specific arguments -->
     <arg name="alsadevnum" default="1"/>
     <arg name="n_channels" default="1" />
-    <arg name="channel_idx" default="0" />
     <arg name="bitrate" default="128" />
 
     <!-- Load parameter config file -->
@@ -20,8 +19,8 @@
     </include>
 
     <!-- Launch feature extraction node -->
-    <!-- <node name="feature_extraction_node" pkg="hri_audition" type="feature_extraction_node.py" output="screen" ns="audio">
+    <node name="feature_extraction_node" pkg="hri_audition" type="feature_extraction_node.py" output="screen" ns="audio">
         <param name="n_channels" value="$(arg n_channels)" />
-    </node> -->
+    </node>
 
 </launch>

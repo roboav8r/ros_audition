@@ -2,7 +2,7 @@
 # At a linux terminal, do a "arecord -l". Then select the device (i.e. "card") number for the device you want to use.
 # alsadevnum: 1
 # n_channels: 7
-# channel_idx: 0
+channel_idx: 0
 
 # Signal sampling and framing parameters
 frame_length: 800 # 50 ms
