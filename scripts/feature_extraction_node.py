@@ -12,13 +12,12 @@ from hri_msgs.msg import AudioFeatures
 class AudioFeatExtNode:
 
     def __init__(self):
-        rospy.init_node('feat_ext_node')
 
         # Get parameters
-        audio_info = rospy.wait_for_message('audio_info', AudioInfo,timeout=10)
-        self.n_channels = audio_info.channels
-        self.sample_rate = audio_info.sample_rate
-        self.sample_fmt = audio_info.sample_format
+        # audio_info = rospy.wait_for_message('audio_info', AudioInfo,timeout=10)
+        self.n_channels = rospy.get_param("n_channels")
+        self.sample_rate = rospy.get_param("sample_rate")
+        self.sample_fmt = rospy.get_param("sample_fmt")
         self.channel_idx = rospy.get_param("channel_idx")
         self.frame_length = rospy.get_param("frame_length")
         self.hop_length = rospy.get_param("hop_length")
@@ -45,6 +44,7 @@ class AudioFeatExtNode:
         # Set up ROS subs and pubs
         self.audio_data_subscriber = rospy.Subscriber('audio_stamped', AudioDataStamped, self.audio_data_callback)
         self.publisher = rospy.Publisher('audio_features', AudioFeatures, queue_size=10)
+        
 
     def extract_features(self):
         self.feature_msg.ZCR = (torch.sum(torch.diff(self.frame > 0),1)/self.frame_length)[0].item()
@@ -75,6 +75,7 @@ class AudioFeatExtNode:
         rospy.spin()
 
 if __name__ == '__main__':
+    rospy.init_node('feat_ext_node')
     node = AudioFeatExtNode()
     node.run()
 
