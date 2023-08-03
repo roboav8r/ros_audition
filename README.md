@@ -41,7 +41,7 @@ card 2: Array [Azure Kinect Microphone Array], device 0: USB Audio [USB Audio]
   Subdevices: 1/1
   Subdevice #0: subdevice #0
 ```
-Next, update the .yaml file in `/config/`. For example, I want to use the Kinect at **card 2**, hence my `kinect_example.yaml` file has a line `alsadevnum: 1` to specify the device parameter.
+Next, update the .yaml file in `/config/`. For example, I want to use the Kinect at **card 2**, hence my `kinect_example.yaml` file has a line `alsadevnum: 2` to specify the device parameter.
 
 Update the launch file to load this file as appropriate.
 
@@ -68,8 +68,8 @@ roslaunch hri_audition kinect_example.launch
 
 Now, record the ROS bagfile and save it to the data directory with an appropriate name. At a terminal:
 ```
-rosbag record /audio/audio_stamped audio/audio_info -O 'data/scenes/<scene name>_<number of the bagfile>' # For example...
-rosbag record /audio/audio_stamped audio/audio_info -O 'data/scenes/lab_0'
+rosbag record /audio/audio_stamped audio/audio_info -O 'data/wav/scene/<scene name>_<number of the bagfile>' # For example...
+rosbag record /audio/audio_stamped audio/audio_info -O 'data/wav/scene/lab_0'
 ```
 Press `ctrl-c` to stop recording.
 
@@ -94,5 +94,9 @@ Validate feature sets - develop test cases (e.g. generated signal with known fea
 
 ## Improvements to existing functions
 feat_ext_node
+- Make a service to call with audio info and raw audio data -> returns feature frame
 - add option to publish frame (default = false)
 - make n_bytes in buf_to_float a param based on audio_info
+
+training_node
+- wait for feature extraction service
