@@ -6,6 +6,8 @@ import rospy
 import rosbag
 import rospkg
 import os
+from sklearn import mixture
+from joblib import dump, load
 
 from audio_common_msgs.msg import AudioInfo, AudioDataStamped
 from hri_msgs.msg import AudioFeatures
@@ -22,6 +24,16 @@ class AudioTrainNode:
         self.pkg_path = self.rospack.get_path('hri_audition')
         self.wav_path = self.pkg_path + '/data/wav/'
         self.feat_path = self.pkg_path + '/data/features/'
+        self.model_path = self.pkg_path + '/data/models/'
+
+        # Data parameters
+        self.columns = ['type','name','zcr','rms','pitch','hnr',
+        'mfcc_1','mfcc_2','mfcc_3','mfcc_4','mfcc_5','mfcc_6',
+        'mfcc_7','mfcc_8','mfcc_9','mfcc_10','mfcc_11','mfcc_12']
+
+        # Model parameters
+        self.gmm_components = 12
+        self.gmm_cov_type = 'diag'
 
         # Set up ROS subs and pubs
         self.wav_pub = rospy.Publisher('/audio/audio_stamped', AudioDataStamped, queue_size=10)
@@ -72,10 +84,8 @@ class AudioTrainNode:
         print('Forming feature .bag data into DataFrame')
 
         # Initialize 
-        cols = ['type','name','zcr','rms','pitch','hnr',
-        'mfcc_1','mfcc_2','mfcc_3','mfcc_4','mfcc_5','mfcc_6',
-        'mfcc_7','mfcc_8','mfcc_9','mfcc_10','mfcc_11','mfcc_12']
-        self.feat_df = pd.DataFrame(columns=cols)
+
+        self.feat_df = pd.DataFrame(columns=self.columns)
         df_idx = 0
 
         # Traverse file structure and convert bag data to dataframe data
@@ -142,16 +152,54 @@ class AudioTrainNode:
                 # Get class label of datafile
                 base = os.path.splitext(file)[0]
                 base = base.split('_')[0]
-                
-                # Check if feature directory and output bag exist. if not, create them
-                if os.path.exists(self.feat_path)==False:
-                    os.mkdir(self.feat_path)
-                
-                if os.path.exists(self.feat_path + '/' + type_str + '/')==False:
-                    os.mkdir(self.feat_path + '/' + type_str + '/')
                     
                 self.feat_df.loc[(self.feat_df['type']==type_str) & (self.feat_df['name']==base)].to_csv(root + '/' + base + '.csv')  
+
+    def train_gmm(self,X_train):
+        clf = mixture.GaussianMixture(n_components=self.gmm_components, covariance_type=self.gmm_cov_type)
+        clf.fit(X_train)
+        return clf
+
+    def train_and_save_gmms(self):
+        print('Training and saving GMMs')
+
+        # Ensure output directories exist
+        if os.path.exists(self.model_path)==False:
+            os.mkdir(self.model_path)
+    
+        for sound_type in ['voice','scene']:
+            full_dir = os.path.join(self.model_path,sound_type)
+            if os.path.exists(full_dir)==False:
+                os.mkdir(full_dir)
+        
+        # Iterate through dataframes/.csvs, train models, and save them
+        for root, dirs, files in os.walk(self.feat_path,topdown=True):
+            for file in files:
+                filepath = os.path.join(root,file)
                 
+                # Get type label of datafile
+                type_dir = os.path.dirname(filepath)
+                type_str = os.path.split(type_dir)[-1]
+
+                # Get class label of datafile
+                base = os.path.splitext(file)[0]
+                ext = os.path.splitext(file)[-1]
+            
+                if ext =='.csv':
+                    sav_path = os.path.join(self.model_path,type_str)
+
+                    # Get training data for this voice ID
+                    data_df = pd.read_csv(filepath,index_col=0)
+                    X = data_df.loc[:,self.columns[6:]].to_numpy()
+           
+                    # Train model
+                    gmm = self.train_gmm(X)
+
+                    # Save model
+                    dump(gmm, sav_path + '/' + base + '.joblib')
+
+
+        
     def handle_train_audio_models(self, req):
         print('Training Audio Models')
         self.generate_feat_bags()
@@ -159,6 +207,8 @@ class AudioTrainNode:
         self.feat_bags_to_df()
 
         self.save_df_to_csvs()
+
+        self.train_and_save_gmms()
 
         return TrainAudioModelsResponse()
 
