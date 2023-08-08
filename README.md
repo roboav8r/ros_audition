@@ -73,6 +73,21 @@ rosbag record /audio/audio_stamped audio/audio_info -O 'data/wav/scene/lab_0'
 ```
 Press `ctrl-c` to stop recording.
 
+## Training the scene/voice classifier models
+Launch the feature extraction node
+```
+roslaunch hri_audition kinect_feat_ext.launch
+```
+
+Then, launch the training server:
+```
+rosrun hri_audition training_node.py 
+```
+Lastly, call the training service. At a third console:
+```
+rosservice call /train_audio_models
+```
+
 ## Running the speaker recognition demo
 TODO
 ## Running the sound scene classification demo
@@ -86,7 +101,7 @@ https://link.springer.com/book/10.1007/978-3-319-27299-3
 
 ## Functional additions
 - Add multichannel support in acquisition / feat extraction
-- Add A16soundsUSB array config files
+- Add 16soundsUSB array config files
 - Launch multiple audio acquisition use with Kinect array simultaneously (multiple array acquisition)?
 
 ## Due Diligence

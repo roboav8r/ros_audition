@@ -30,10 +30,12 @@ class AudioTrainNode:
         self.columns = ['type','name','zcr','rms','pitch','hnr',
         'mfcc_1','mfcc_2','mfcc_3','mfcc_4','mfcc_5','mfcc_6',
         'mfcc_7','mfcc_8','mfcc_9','mfcc_10','mfcc_11','mfcc_12']
+        self.mfcc_cols = ['mfcc_1','mfcc_2','mfcc_3','mfcc_4','mfcc_5','mfcc_6',
+        'mfcc_7','mfcc_8','mfcc_9','mfcc_10','mfcc_11','mfcc_12']
 
         # Model parameters
-        self.gmm_components = 12
-        self.gmm_cov_type = 'diag'
+        self.gmm_components = 32
+        self.gmm_cov_type = 'full'
 
         # Set up ROS subs and pubs
         self.wav_pub = rospy.Publisher('/audio/audio_stamped', AudioDataStamped, queue_size=10)
