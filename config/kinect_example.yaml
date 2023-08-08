@@ -1,6 +1,6 @@
 # Find the linux audio device to use for audition. 
 # At a linux terminal, do a "arecord -l". Then select the device (i.e. "card") number for the device you want to use.
-alsadevnum: 1
+alsadevnum: 2
 n_channels: 1
 channel_idx: 0
 sample_rate: 16000

@@ -8,7 +8,6 @@ project(hri_audition)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-  hri_audition
   rospy
   std_msgs
   message_generation
@@ -158,6 +157,7 @@ include_directories(
 catkin_install_python(PROGRAMS
   scripts/feature_extraction_node.py
   scripts/training_node.py
+  scripts/scene_classifier.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
