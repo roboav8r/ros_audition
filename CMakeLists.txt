@@ -158,6 +158,7 @@ catkin_install_python(PROGRAMS
   scripts/feature_extraction_node.py
   scripts/training_node.py
   scripts/scene_classifier.py
+  scripts/voice_classifier.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 

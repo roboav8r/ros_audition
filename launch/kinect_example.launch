@@ -23,7 +23,7 @@
         <param name="n_channels" value="$(arg n_channels)" />
     </node>
 
-    <!-- Launch scene classification node -->
-    <node name="scene_classifier_node" pkg="hri_audition" type="scene_classifier.py" output="screen" ns="audio" />
+    <!-- Launch voice classification node -->
+    <node name="voice_classifier_node" pkg="hri_audition" type="voice_classifier.py" output="screen" ns="audio" />
 
 </launch>
