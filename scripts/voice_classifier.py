@@ -55,9 +55,10 @@ class VoiceClassifier:
 
         for ii in range(len(self.likelihoods)):
             # Compute weighted likelihood that this feature matches this model
-            self.likelihoods[ii] = np.multiply(self.clfs[ii].predict_proba(self.mfcc_vec),self.clfs[ii].weights_).sum()
+            # self.likelihoods[ii] = np.multiply(self.clfs[ii].predict_proba(self.mfcc_vec),self.clfs[ii].weights_).sum()
+            self.likelihoods[ii] = self.clfs[ii].score(self.mfcc_vec)
 
-        self.likelihoods /= self.likelihoods.sum()
+        # self.likelihoods /= self.likelihoods.sum()
         self.max_ind = np.argmax(self.likelihoods)
         output_data = str(self.clf_names[self.max_ind]) + ": (" + str(self.likelihoods[self.max_ind]) + ")"
 

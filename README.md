@@ -54,8 +54,8 @@ roslaunch hri_audition kinect_example.launch
 
 Now, record the ROS bagfile and save it to the data directory with an appropriate name. At a terminal:
 ```
-rosbag record /audio/audio_stamped audio/audio_info -O 'data/people/<person's name>_<number of the bagfile>' # For example...
-rosbag record /audio/audio_stamped audio/audio_info -O 'data/people/john_0'
+rosbag record /audio/audio_stamped audio/audio_info -O 'data/wav/voice/<person's name>_<number of the bagfile>' # For example...
+rosbag record /audio/audio_stamped audio/audio_info -O 'data/wav/voice/john_0'
 ```
 Speak for approximately 60 seconds, using the [prompt](prompt.md) if needed.
 Press `ctrl-c` to stop recording.
