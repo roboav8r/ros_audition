@@ -49,6 +49,21 @@ Next, update the .yaml file in `/config/`. For example, I want to use the 16soun
 Update the launch file with the alsadevnum as appropriate
 
 # Usage
+
+## Recording data for array calibration
+Launch the array:
+```
+roslaunch hri_audition array_calibration.launch alsadevnum:=2 f_sample:=48000
+```
+
+[TODO - add this to the audio cal node]
+Record bag data files for this config:
+```
+mkdir -p ~/ros_ws/src/hri_audition/data/calibration/my_audio_hw_config
+cd ~/ros_ws/src/hri_audition/data/calibration/my_audio_hw_config
+rosbag record -O s6 /audio/audio_info /audio/audio_stamped --duration=5s
+```
+
 ## Recording training data for speaker identification
 To record wave (time-series) data to train the speaker recognition system, first start the microphone. At a properly sourced terminal: 
 ```
