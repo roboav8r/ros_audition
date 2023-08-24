@@ -1,0 +1,4 @@
+audio_common_msgs/AudioInfo info 
+audio_common_msgs/AudioDataStamped[] data
+---
+hri_msgs/AudioFeatures features
