@@ -37,13 +37,16 @@ First, find the device you want to use for audition. At a terminal, `arecord -l`
 card 0: PCH [HDA Intel PCH], device 0: ALC295 Analog [ALC295 Analog]
   Subdevices: 1/1
   Subdevice #0: subdevice #0
-card 2: Array [Azure Kinect Microphone Array], device 0: USB Audio [USB Audio]
+card 1: Array [Azure Kinect Microphone Array], device 0: USB Audio [USB Audio]
+  Subdevices: 1/1
+  Subdevice #0: subdevice #0
+card 2: D20 [16SoundsUSB Audio 2.0], device 0: USB Audio [USB Audio]
   Subdevices: 1/1
   Subdevice #0: subdevice #0
 ```
-Next, update the .yaml file in `/config/`. For example, I want to use the Kinect at **card 2**, hence my `kinect_example.yaml` file has a line `alsadevnum: 1` to specify the device parameter.
+Next, update the .yaml file in `/config/`. For example, I want to use the 16soundsUSB at **card 2**, hence my `16soundsUSB.yaml` file has a line `alsadevnum: 2` to specify the device parameter.
 
-Update the launch file to load this file as appropriate.
+Update the launch file with the alsadevnum as appropriate
 
 # Usage
 ## Recording training data for speaker identification

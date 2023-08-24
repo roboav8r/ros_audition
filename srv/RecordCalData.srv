@@ -1,0 +1,5 @@
+string hw_config_name
+string info_topic
+string stamped_data_topic
+uint8 duration
+---

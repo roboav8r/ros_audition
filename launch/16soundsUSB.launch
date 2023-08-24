@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<launch>
+
+    <!-- 16soundsUSB-specific arguments -->
+    <arg name="device" default=""/>
+    <arg name="n_channels" value="4" />
+    <arg name="bitrate" default="128" />
+    <arg name="dst" default="appsink"/>
+    <arg name="format" default="wave"/>
+    <arg name="depth" default="16"/>
+    <arg name="sample_rate" default="16000"/>
+    <arg name="sample_format" default="S16LE"/>
+    <arg name="ns" default="audio"/>
+    <arg name="audio_topic" default="audio"/>
+
+    <!-- Launch signal acquisition node -->
+    <include file="$(find audio_capture)/launch/capture_wave.launch">
+        <arg name="dst" value="$(arg dst)"/>
+        <arg name="device" value="$(arg device)"/>
+        <arg name="bitrate" value="$(arg bitrate)"/>
+        <arg name="channels" value="$(arg n_channels)"/>
+        <arg name="depth" value="$(arg depth)"/>
+        <arg name="sample_rate" value="$(arg sample_rate)"/>
+        <arg name="sample_format" value="$(arg sample_format)"/>
+        <arg name="ns" value="$(arg ns)"/>
+        <arg name="audio_topic" value="$(arg audio_topic)"/>
+    </include>
+
+
+</launch>

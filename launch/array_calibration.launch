@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<launch>
+
+    <!-- Device and acquisition parameters -->
+    <arg name="device_name" default="16soundsUSB" />
+    <arg name="alsadevnum" default="1" />
+    <arg name="f_sample" default="16000" />
+    <arg name="wav_topic" default="audio"/>
+
+    <!-- Calibrating? -->
+    <arg name="calibration" default="false" />
+
+    <!-- Launch capture device -->
+    <arg name="device_path" default="launch/$(arg device_name).launch" />
+    <include file="$(find hri_audition)/$(arg device_path)">
+        <arg name="device" value="$(arg alsadevnum)"/>
+        <arg name="sample_rate" value="$(arg f_sample)" />
+        <arg name="audio_topic" default="$(arg wav_topic)"/>
+    </include>
+
+    <!-- Optionally launch calibration node -->
+    <node name="cal_node" pkg="hri_audition" type="calibration_node.py" output="screen" ns="audio" />
+
+</launch>
