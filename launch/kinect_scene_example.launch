@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<launch>
+
+    <!-- Kinect-specific arguments -->
+    <arg name="alsadevnum" default="4"/>
+    <arg name="n_channels" default="7" />
+
+    <!-- Task-specific arguments -->
+    <!-- Obtained from training data by `ffmpeg -i <training data file>` -->
+    <arg name="sample_rate" default="16000" />
+    <arg name="sample_format" default="S16LE" />
+    <arg name="bitrate" default="256" /> <!-- kb/s -->
+    <!-- frame_length: 160000 # 10 s -->
+    <!-- hop_length: 16000 # 1 s -->
+
+    <!-- Launch signal acquisition node -->
+    <include file="$(find audio_capture)/launch/capture_wave.launch">
+        <arg name="device" value="$(arg alsadevnum)"/>
+        <!-- <arg name="channels" value="$(arg n_channels)" /> -->
+        <arg name="sample_rate" default="$(arg sample_rate)" />
+        <arg name="sample_format" default="$(arg sample_format)" />
+        <arg name="bitrate" value="$(arg bitrate)" />
+    </include>
+
+    <!-- Launch scene classifier node -->
+
+</launch>
