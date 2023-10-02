@@ -41,7 +41,7 @@ card 2: Array [Azure Kinect Microphone Array], device 0: USB Audio [USB Audio]
   Subdevices: 1/1
   Subdevice #0: subdevice #0
 ```
-Next, update the .yaml file in `/config/`. For example, I want to use the Kinect at **card 2**, hence my `kinect_example.yaml` file has a line `alsadevnum: 1` to specify the device parameter.
+Next, update the .yaml file in `/config/`. For example, I want to use the Kinect at **card 2**, hence my `kinect_example.yaml` file has a line `alsadevnum: 2` to specify the device parameter.
 
 Update the launch file to load this file as appropriate.
 
@@ -54,8 +54,8 @@ roslaunch hri_audition kinect_example.launch
 
 Now, record the ROS bagfile and save it to the data directory with an appropriate name. At a terminal:
 ```
-rosbag record /audio/audio_stamped audio/audio_info -O 'data/people/<person's name>_<number of the bagfile>' # For example...
-rosbag record /audio/audio_stamped audio/audio_info -O 'data/people/john_0'
+rosbag record /audio/audio_stamped audio/audio_info -O 'data/wav/voice/<person's name>_<number of the bagfile>' # For example...
+rosbag record /audio/audio_stamped audio/audio_info -O 'data/wav/voice/john_0'
 ```
 Speak for approximately 60 seconds, using the [prompt](prompt.md) if needed.
 Press `ctrl-c` to stop recording.
@@ -68,10 +68,25 @@ roslaunch hri_audition kinect_example.launch
 
 Now, record the ROS bagfile and save it to the data directory with an appropriate name. At a terminal:
 ```
-rosbag record /audio/audio_stamped audio/audio_info -O 'data/scenes/<scene name>_<number of the bagfile>' # For example...
-rosbag record /audio/audio_stamped audio/audio_info -O 'data/scenes/lab_0'
+rosbag record /audio/audio_stamped audio/audio_info -O 'data/wav/scene/<scene name>_<number of the bagfile>' # For example...
+rosbag record /audio/audio_stamped audio/audio_info -O 'data/wav/scene/lab_0'
 ```
 Press `ctrl-c` to stop recording.
+
+## Training the scene/voice classifier models
+Launch the feature extraction node
+```
+roslaunch hri_audition kinect_feat_ext.launch
+```
+
+Then, launch the training server:
+```
+rosrun hri_audition training_node.py 
+```
+Lastly, call the training service. At a third console:
+```
+rosservice call /train_audio_models
+```
 
 ## Running the speaker recognition demo
 TODO
@@ -86,7 +101,7 @@ https://link.springer.com/book/10.1007/978-3-319-27299-3
 
 ## Functional additions
 - Add multichannel support in acquisition / feat extraction
-- Add A16soundsUSB array config files
+- Add 16soundsUSB array config files
 - Launch multiple audio acquisition use with Kinect array simultaneously (multiple array acquisition)?
 
 ## Due Diligence
@@ -94,5 +109,9 @@ Validate feature sets - develop test cases (e.g. generated signal with known fea
 
 ## Improvements to existing functions
 feat_ext_node
+- Make a service to call with audio info and raw audio data -> returns feature frame
 - add option to publish frame (default = false)
 - make n_bytes in buf_to_float a param based on audio_info
+
+training_node
+- wait for feature extraction service

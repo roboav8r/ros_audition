@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<launch>
+
+    <!-- Load parameter config file -->
+    <arg name="config_path" default="config/kinect_example.yaml" />
+    <rosparam command="load" file="$(find hri_audition)/$(arg config_path)" ns="audio"/>
+
+    <!-- Launch feature extraction node -->
+    <node name="feature_extraction_node" pkg="hri_audition" type="feature_extraction_node.py" output="screen" ns="audio" />
+
+</launch>
