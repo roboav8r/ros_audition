@@ -1,0 +1,8 @@
+audio_acq_node:
+  ros__parameters:
+    n_channels: 2
+    src: 'plughw:2,0'
+    sample_rate: 32000
+    hop_size: 32000
+    frame_size: 32000 # publish 1 second every second
+    codec: 'pcm_s16le'
