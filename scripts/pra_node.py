@@ -19,7 +19,7 @@ from rclpy.node import Node
 from ament_index_python.packages import get_package_share_directory
 
 from audio_common_msgs.msg import AudioDataStamped
-from std_msgs.msg import Float64MultiArray
+from ros_audition.msg import AudioAzSource, AudioAzSources
 
 
 class PyRoomAcousticsNode(Node):
@@ -32,9 +32,14 @@ class PyRoomAcousticsNode(Node):
             self.audio_data_callback,
             10)
         
+        self.source_pub = self.create_publisher(AudioAzSources, 'audio_az_sources', 10)
+        self.source_msg = AudioAzSource()
+        self.sources_msg = AudioAzSources()
+
         # Declare parameters with default values
         self.declare_parameter('n_channels', rclpy.Parameter.Type.INTEGER)
         self.declare_parameter('sample_rate', rclpy.Parameter.Type.INTEGER)
+        self.declare_parameter('microphone_frame_id',rclpy.Parameter.Type.STRING)
         self.declare_parameter('frame_size', rclpy.Parameter.Type.INTEGER)
         self.declare_parameter('speed_sound',rclpy.Parameter.Type.DOUBLE)
         self.declare_parameter('n_fft', rclpy.Parameter.Type.INTEGER)
@@ -48,6 +53,7 @@ class PyRoomAcousticsNode(Node):
         # Retrieve parameters
         self.n_channels = self.get_parameter('n_channels').get_parameter_value().integer_value
         self.sample_rate = self.get_parameter('sample_rate').get_parameter_value().integer_value
+        self.microphone_frame_id = self.get_parameter('microphone_frame_id').get_parameter_value().string_value
         self.frame_size = self.get_parameter('frame_size').get_parameter_value().integer_value
         self.speed_sound = self.get_parameter('speed_sound').get_parameter_value().double_value
         self.n_fft = self.get_parameter('n_fft').get_parameter_value().integer_value
@@ -62,11 +68,6 @@ class PyRoomAcousticsNode(Node):
         self.freq_domain_frame = torch.zeros([self.n_channels, self.n_fft, self.frame_size],dtype=torch.float16)
 
         # Audio processing
-        self.get_logger().info(str(self.array_pos))
-        self.get_logger().info(str(self.sample_rate))
-        self.get_logger().info(str(self.n_fft))
-        self.get_logger().info(str(self.speed_sound))
-        self.get_logger().info(str(self.n_sources))
         self.doa = pra.doa.algorithms[self.ssl_algo](self.array_pos, self.sample_rate, self.n_fft, c=self.speed_sound, num_src=self.n_sources, max_four=4)
 
     def audio_data_callback(self, msg):
@@ -85,11 +86,18 @@ class PyRoomAcousticsNode(Node):
 
         peaks = self.doa.grid.find_peaks(self.n_sources)
 
+
+        # Format output
+        self.sources_msg = AudioAzSources()
+        self.sources_msg.header.stamp = msg.header.stamp
+        self.sources_msg.header.frame_id = self.microphone_frame_id
+        
         for peak in peaks:
-            self.get_logger().info("Found peak at %s rad with magnitude %s" % (str(self.doa.grid.azimuth[peak]),str(self.doa.grid.values[peak])))
-
-
-
+            self.source_msg = AudioAzSource()
+            self.source_msg.azimuth = self.doa.grid.azimuth[peak]
+            self.source_msg.magnitude = self.doa.grid.values[peak]
+            self.sources_msg.sources.append(self.source_msg)
+            self.source_pub.publish(self.sources_msg)
 
 def main(args=None):
     rclpy.init(args=args)
