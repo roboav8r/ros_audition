@@ -10,11 +10,21 @@ install(DIRECTORY config DESTINATION share/${PROJECT_NAME}/)
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
+find_package(std_msgs REQUIRED)
+find_package(audio_common_msgs REQUIRED)
+find_package(rosidl_default_generators REQUIRED)
 
 # Install Python
 install(PROGRAMS
   scripts/audio_acq_node.py
+  scripts/pra_node.py
   DESTINATION lib/${PROJECT_NAME}
+)
+
+rosidl_generate_interfaces(${PROJECT_NAME}
+  "msg/AudioAzSource.msg"
+  "msg/AudioAzSources.msg"
+  DEPENDENCIES std_msgs audio_common_msgs
 )
 
 if(BUILD_TESTING)
