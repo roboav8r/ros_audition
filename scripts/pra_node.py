@@ -67,8 +67,18 @@ class PyRoomAcousticsNode(Node):
         self.time_domain_frame = torch.zeros([self.frame_size, self.n_channels],dtype=torch.float16)
         self.freq_domain_frame = torch.zeros([self.n_channels, self.n_fft, self.frame_size],dtype=torch.float16)
 
-        # Audio processing
+        # Audio direction-of-arrival processing
         self.doa = pra.doa.algorithms[self.ssl_algo](self.array_pos, self.sample_rate, self.n_fft, c=self.speed_sound, num_src=self.n_sources, max_four=4)
+
+        # Audio beamforming
+        self.beam_dict = {}
+
+        for idx in range(self.doa.grid.n_points):
+            self.beam_dict[idx] = {}
+
+            # Create beamformer object, compute beam weights
+            self.beam_dict[idx]['bf'] = pra.Beamformer(self.array_pos, self.sample_rate, self.n_fft)
+            self.beam_dict[idx]['bf'].far_field_weights(self.doa.grid.azimuth[idx])
 
     def audio_data_callback(self, msg):
 
@@ -80,22 +90,29 @@ class PyRoomAcousticsNode(Node):
 
         torch.save(self.time_domain_frame,'pra_node_data_recovered.pt')
 
+        # Find directions of arrival
         self.freq_domain_frame = pra.transform.stft.analysis(self.time_domain_frame, self.n_fft, self.n_fft//2).transpose([2, 1, 0])
-        
         self.doa.locate_sources(self.freq_domain_frame, freq_range=self.freq_range)
-
         peaks = self.doa.grid.find_peaks(self.n_sources)
-
 
         # Format output
         self.sources_msg = AudioAzSources()
         self.sources_msg.header.stamp = msg.header.stamp
         self.sources_msg.header.frame_id = self.microphone_frame_id
         
-        for peak in peaks:
+        for ii, peak_idx in enumerate(peaks):
             self.source_msg = AudioAzSource()
-            self.source_msg.azimuth = self.doa.grid.azimuth[peak]
-            self.source_msg.magnitude = self.doa.grid.values[peak]
+            self.source_msg.azimuth = self.doa.grid.azimuth[peak_idx]
+            self.source_msg.magnitude = self.doa.grid.values[peak_idx]
+
+            self.beam_dict[peak_idx]['bf'].record(self.time_domain_frame.T, self.sample_rate)
+            self.beam_dict[peak_idx]['signal'] = self.beam_dict[peak_idx]['bf'].process(FD=False)
+            excess_front = int(np.ceil((self.n_fft-1)/2))
+            excess_back = int(np.floor((self.n_fft-1)/2))
+        
+            torch.save(self.beam_dict[peak_idx]['signal'][excess_front:-excess_back],'pra_node_bf_sig_%s.pt' % ii)
+            self.source_msg.audio.data = self.beam_dict[peak_idx]['signal'][excess_front:-excess_back].tobytes()
+            
             self.sources_msg.sources.append(self.source_msg)
             self.source_pub.publish(self.sources_msg)
 

@@ -13,7 +13,7 @@
     # Sound source localization
     speed_sound: 343.
     n_sources: 2
-    n_fft: 256
+    n_fft: 512
     f_min: 300
     f_max: 8000
     array_x_pos: [0.0, 0.04, 0.02, -0.02, -0.04, -0.02, 0.02]
