@@ -18,12 +18,15 @@ find_package(rosidl_default_generators REQUIRED)
 install(PROGRAMS
   scripts/audio_acq_node.py
   scripts/pra_node.py
+  scripts/doa_speech_rec_node.py
   DESTINATION lib/${PROJECT_NAME}
 )
 
 rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/AudioAzSource.msg"
   "msg/AudioAzSources.msg"
+  "msg/SpeechAzSource.msg"
+  "msg/SpeechAzSources.msg"
   DEPENDENCIES std_msgs audio_common_msgs
 )
 

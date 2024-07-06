@@ -114,7 +114,7 @@ class PyRoomAcousticsNode(Node):
             self.source_msg.audio.data = self.beam_dict[peak_idx]['signal'][excess_front:-excess_back].tobytes()
             
             self.sources_msg.sources.append(self.source_msg)
-            self.source_pub.publish(self.sources_msg)
+        self.source_pub.publish(self.sources_msg)
 
 def main(args=None):
     rclpy.init(args=args)

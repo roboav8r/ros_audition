@@ -41,4 +41,14 @@ def generate_launch_description():
     )
     ld.add_action(pra_node)
 
+    # Directional speech recognition node
+    speech_node = Node(
+        package='ros_audition',
+        executable='doa_speech_rec_node.py',
+        name='directional_speech_rec_node',
+        output='screen',
+        parameters=[audio_config]
+    )
+    ld.add_action(speech_node)
+
     return ld
