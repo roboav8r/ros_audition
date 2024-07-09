@@ -18,7 +18,14 @@
     f_max: 8000
     array_x_pos: [0.0, 0.04, 0.02, -0.02, -0.04, -0.02, 0.02]
     array_y_pos: [0.0, 0.0, -0.03464, -0.03464, 0.0, 0.03464, 0.03464]
-
     ssl_algo: 'MUSIC'
 
-    # Speech recognition
+    # Speech activity detection & recognition
+    n_silent_frames: 2
+    trigger_level: 3.0
+    trigger_time: 0.1
+    search_time: 0.1
+    allowed_gap: 0.1
+    pre_trigger_time: 0.1
+    min_voice_samples: 16800
+    src_match_thresh_rad: .175 # .5 = ~28.6 degrees # .175 rad = ~10 degrees

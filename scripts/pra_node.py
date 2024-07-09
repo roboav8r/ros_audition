@@ -106,7 +106,8 @@ class PyRoomAcousticsNode(Node):
             self.source_msg.magnitude = self.doa.grid.values[peak_idx]
 
             self.beam_dict[peak_idx]['bf'].record(self.time_domain_frame.T, self.sample_rate)
-            self.beam_dict[peak_idx]['signal'] = self.beam_dict[peak_idx]['bf'].process(FD=False)
+            self.beam_dict[peak_idx]['signal'] = self.beam_dict[peak_idx]['bf'].process(FD=False).astype(np.float16)
+
             excess_front = int(np.ceil((self.n_fft-1)/2))
             excess_back = int(np.floor((self.n_fft-1)/2))
         
@@ -115,6 +116,7 @@ class PyRoomAcousticsNode(Node):
             
             self.sources_msg.sources.append(self.source_msg)
         self.source_pub.publish(self.sources_msg)
+        self.get_logger().info('VVVVVVVVVVVVVVVVVVsent msg\n')
 
 def main(args=None):
     rclpy.init(args=args)
