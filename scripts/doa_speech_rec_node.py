@@ -31,6 +31,9 @@ class AudioSource():
         self.n_silent = 0
         self.frame = frame
 
+    def append_frame(self, new_frame):
+        self.frame = torch.cat((self.frame,new_frame),0)
+
 class DirectionalSpeechRecNode(Node):
 
     def __init__(self):
@@ -105,7 +108,11 @@ class DirectionalSpeechRecNode(Node):
 
     def audio_data_callback(self, msg):
 
+        self.get_logger().info("Tracking %s sources" % len(self.voice_sources))
+
         new_voice_sources = []
+        new_voice_azimuths = []
+        new_voice_matches = []
 
         # For each incoming directional source
         for ii, az_source in enumerate(msg.sources):
@@ -114,7 +121,7 @@ class DirectionalSpeechRecNode(Node):
 
             # Put data in a torch tensor
             self.frame = torch.frombuffer(az_source.audio.data,dtype=torch.float16)
-            torch.save(self.frame,'incoming_frame_%s.pt' % ii)
+            # torch.save(self.frame,'incoming_frame_%s.pt' % ii)
 
             # Check for voice activity 
             tic = time.time()
@@ -125,16 +132,49 @@ class DirectionalSpeechRecNode(Node):
 
             if len(self.voice_data) > self.min_voice_samples:
                 new_voice_sources.append(AudioSource(az_source.azimuth,self.frame))
+                new_voice_azimuths.append(az_source.azimuth)
 
-                torch.save(self.frame,'voice_frame_%s.pt' % ii)
-        
-        # TODO - match existing voice_sources with new voice sources
+        self.get_logger().info("Got %s new sources" % len(new_voice_sources))
 
-        # # TODO - if unmatched old source, process, delete, and send message
+        # Match existing voice_sources with new voice sources
+        for jj, voice in enumerate(self.voice_sources):
+
+            # Compute distance between existing voice source and incoming voice sources
+            az_dist = np.array(new_voice_azimuths) - voice.azimuth
+
+            self.get_logger().info("Source at %s has original az_dist: %s" % (voice.azimuth, az_dist))
+
+            for ii, az in enumerate(az_dist):
+                if az > np.pi:
+                    az_dist[ii] = az - 2*np.pi
+                if az < -np.pi:
+                    az_dist[ii] = az + 2*np.pi
+            self.get_logger().info("Corrected az_dist: %s" % (az_dist))
+
+            if len(az_dist) > 0: # If there are new sources
+                min_idx = np.argmin(az_dist)
+                self.get_logger().info("Closest source is %s with delta_angle %s" % (min_idx, az_dist[min_idx]))
+
+                if az_dist[min_idx] < self.src_match_thresh_rad:
+                    voice.append_frame(new_voice_sources[min_idx].frame)
+                    new_voice_matches.append(min_idx)
+                    # TODO - update azimuth of source
+
+                else: # If unmatched old source, process, delete, and send message
+                    # TODO - voice recognition
+                    torch.save(voice.frame,'voice_frame_%s.pt' % ii)
+                    del self.voice_sources[jj]
+
+            else: # If unmatched old source, process, delete, and send message
+                # TODO - voice recognition
+                torch.save(voice.frame,'voice_frame_%s.pt' % ii)
+                del self.voice_sources[jj]
+
 
         # Create voice sources from any new, unmatched voice sources 
-        for source in new_voice_sources:
-            self.voice_sources.append(source)
+        for ii, source in enumerate(new_voice_sources):
+            if ii not in new_voice_matches:
+                self.voice_sources.append(source)
 
 def main(args=None):
     rclpy.init(args=args)
