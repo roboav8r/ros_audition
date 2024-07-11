@@ -23,9 +23,10 @@
     # Speech activity detection & recognition
     n_silent_frames: 2
     trigger_level: 3.0
-    trigger_time: 0.1
-    search_time: 0.1
-    allowed_gap: 0.1
-    pre_trigger_time: 0.1
-    min_voice_samples: 16800
+    trigger_time: 0.25
+    search_time: 0.25
+    allowed_gap: 0.25
+    pre_trigger_time: 0.25
+    min_voice_samples: 31200
     src_match_thresh_rad: .175 # .5 = ~28.6 degrees # .175 rad = ~10 degrees
+    lexicon_file: 'config/lexicon.txt'

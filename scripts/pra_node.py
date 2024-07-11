@@ -116,7 +116,6 @@ class PyRoomAcousticsNode(Node):
             
             self.sources_msg.sources.append(self.source_msg)
         self.source_pub.publish(self.sources_msg)
-        self.get_logger().info('VVVVVVVVVVVVVVVVVVsent msg\n')
 
 def main(args=None):
     rclpy.init(args=args)
