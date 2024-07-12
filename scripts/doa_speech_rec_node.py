@@ -151,10 +151,9 @@ class DirectionalSpeechRecNode(Node):
             word_score=WORD_SCORE,
         )
 
-        self.acoustic_model = torch.jit.load(self.model_path)
-        self.acoustic_model.to(self.torch_device)
-        self.acoustic_model.eval()
-
+        # self.acoustic_model = torch.jit.load(self.model_path)
+        # self.acoustic_model.to(self.torch_device)
+        # self.acoustic_model.eval()
 
     def asr(self, voice_tensor):
 
@@ -167,9 +166,10 @@ class DirectionalSpeechRecNode(Node):
 
             # CPU CTC beam search decoder
             beam_search_result = self.beam_search_decoder(emission.cpu())
+            scores = [hyp.score for hyp in beam_search_result[0]]
             beam_search_transcript = " ".join(beam_search_result[0][0].words).strip()
 
-            return beam_search_transcript
+            return beam_search_transcript, torch.nn.functional.softmax(torch.Tensor(scores),0)[0].item()
 
     def audio_data_callback(self, msg):
 
@@ -224,10 +224,11 @@ class DirectionalSpeechRecNode(Node):
                 else: # If unmatched old source, process, delete, and send message
                     torch.save(voice.frame,'voice_frame_%s.pt' % jj)
                     jj+=1
-                    transcript = self.asr(voice.frame)
+                    transcript, conf = self.asr(voice.frame)
                     self.source_msg = SpeechAzSource()
                     self.source_msg.azimuth = voice.azimuth
                     self.source_msg.transcript = transcript
+                    self.source_msg.confidence = conf
                     self.sources_msg.sources.append(self.source_msg)
 
             # Create voice sources from any new, unmatched voice sources 
@@ -240,10 +241,11 @@ class DirectionalSpeechRecNode(Node):
             for jj, voice in enumerate(self.voice_sources):
                 torch.save(voice.frame,'voice_frame_%s.pt' % jj)
                 jj+=1
-                transcript = self.asr(voice.frame)
+                transcript, conf = self.asr(voice.frame)
                 self.source_msg = SpeechAzSource()
                 self.source_msg.azimuth = voice.azimuth
                 self.source_msg.transcript = transcript
+                self.source_msg.confidence = conf
                 self.sources_msg.sources.append(self.source_msg)
 
             self.voice_sources = []
