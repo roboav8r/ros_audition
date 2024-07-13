@@ -9,6 +9,7 @@
     frame_size: 48000 # publish 1 second every second
     microphone_frame_id: 'kinect_frame'
     array_info_path: 'config/kinect_array.yaml'
+    codec: 'pcm_s16le'
 
     # Sound source localization
     speed_sound: 343.
