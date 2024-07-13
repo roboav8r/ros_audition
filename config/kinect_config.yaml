@@ -9,6 +9,7 @@
     frame_size: 48000 # publish 1 second every second
     microphone_frame_id: 'kinect_frame'
     array_info_path: 'config/kinect_array.yaml'
+    codec: 'pcm_s16le'
 
     # Sound source localization
     speed_sound: 343.
@@ -18,5 +19,15 @@
     f_max: 8000
     array_x_pos: [0.0, 0.04, 0.02, -0.02, -0.04, -0.02, 0.02]
     array_y_pos: [0.0, 0.0, -0.03464, -0.03464, 0.0, 0.03464, 0.03464]
-
     ssl_algo: 'MUSIC'
+
+    # Speech activity detection & recognition
+    n_silent_frames: 2
+    trigger_level: 3.0
+    trigger_time: 0.25
+    search_time: 0.25
+    allowed_gap: 0.25
+    pre_trigger_time: 0.25
+    min_voice_samples: 31200
+    src_match_thresh_rad: .175 # .5 = ~28.6 degrees # .175 rad = ~10 degrees
+    lexicon_file: 'config/lexicon.txt'
