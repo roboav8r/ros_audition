@@ -37,7 +37,7 @@ class PyRoomAcousticsNode(Node):
         self.sources_msg = AudioAzSources()
 
         # Declare parameters with default values
-        self.declare_parameter('n_channels', rclpy.Parameter.Type.INTEGER)
+        self.declare_parameter('channel_indices_used', [0,1,2,3,4,5])
         self.declare_parameter('sample_rate', rclpy.Parameter.Type.INTEGER)
         self.declare_parameter('microphone_frame_id',rclpy.Parameter.Type.STRING)
         self.declare_parameter('frame_size', rclpy.Parameter.Type.INTEGER)
@@ -46,12 +46,14 @@ class PyRoomAcousticsNode(Node):
         self.declare_parameter('n_sources', rclpy.Parameter.Type.INTEGER)
         self.declare_parameter('f_min', rclpy.Parameter.Type.INTEGER)
         self.declare_parameter('f_max', rclpy.Parameter.Type.INTEGER)
+        self.declare_parameter('doa_dimension', rclpy.Parameter.Type.INTEGER)
         self.declare_parameter('array_x_pos',rclpy.Parameter.Type.DOUBLE_ARRAY)
         self.declare_parameter('array_y_pos',rclpy.Parameter.Type.DOUBLE_ARRAY)
         self.declare_parameter('ssl_algo',rclpy.Parameter.Type.STRING)
 
         # Retrieve parameters
-        self.n_channels = self.get_parameter('n_channels').get_parameter_value().integer_value
+        self.channel_indices_used = self.get_parameter('channel_indices_used').get_parameter_value().integer_array_value
+        self.n_channels_used = len(self.channel_indices_used)
         self.sample_rate = self.get_parameter('sample_rate').get_parameter_value().integer_value
         self.microphone_frame_id = self.get_parameter('microphone_frame_id').get_parameter_value().string_value
         self.frame_size = self.get_parameter('frame_size').get_parameter_value().integer_value
@@ -59,8 +61,15 @@ class PyRoomAcousticsNode(Node):
         self.n_fft = self.get_parameter('n_fft').get_parameter_value().integer_value
         self.n_sources = self.get_parameter('n_sources').get_parameter_value().integer_value
         self.freq_range = [self.get_parameter('f_min').get_parameter_value().integer_value, self.get_parameter('f_max').get_parameter_value().integer_value]
-        self.array_pos = np.array([self.get_parameter('array_x_pos').get_parameter_value().double_array_value,
-                                   self.get_parameter('array_y_pos').get_parameter_value().double_array_value])
+        self.doa_dimension = self.get_parameter('doa_dimension').get_parameter_value().integer_value
+        if self.doa_dimension==2:
+            self.array_pos = np.array([self.get_parameter('array_x_pos').get_parameter_value().double_array_value,
+                                    self.get_parameter('array_y_pos').get_parameter_value().double_array_value])
+        elif self.doa_dimension==3:
+            self.declare_parameter('array_z_pos',rclpy.Parameter.Type.DOUBLE_ARRAY)
+            self.array_pos = np.array([self.get_parameter('array_x_pos').get_parameter_value().double_array_value,
+                                    self.get_parameter('array_y_pos').get_parameter_value().double_array_value,
+                                    self.get_parameter('array_z_pos').get_parameter_value().double_array_value])
         self.ssl_algo = self.get_parameter('ssl_algo').get_parameter_value().string_value
 
         # Audio data storage
@@ -68,7 +77,7 @@ class PyRoomAcousticsNode(Node):
         self.freq_domain_frame = torch.zeros([self.n_channels, self.n_fft, self.frame_size],dtype=torch.float16)
 
         # Audio direction-of-arrival processing
-        self.doa = pra.doa.algorithms[self.ssl_algo](self.array_pos, self.sample_rate, self.n_fft, c=self.speed_sound, num_src=self.n_sources, max_four=4)
+        self.doa = pra.doa.algorithms[self.ssl_algo](self.array_pos, self.sample_rate, self.n_fft, c=self.speed_sound, num_src=self.n_sources, max_four=4, dim=self.doa_dimension)
 
         # Audio beamforming
         self.beam_dict = {}
@@ -82,13 +91,13 @@ class PyRoomAcousticsNode(Node):
 
     def audio_data_callback(self, msg):
 
-        chunk = torch.from_numpy(np.frombuffer(msg.audio.data,dtype=np.float16)).view(-1,self.n_channels)
+        chunk = torch.frombuffer(msg.audio.data,dtype=np.float16).view(-1,self.n_channels_used)
 
         # Roll the frame, and replace oldest contents with new chunk
         self.time_domain_frame = torch.roll(self.time_domain_frame, -chunk.size(0), 0)
         self.time_domain_frame[-chunk.size(0):,:] = -chunk
 
-        torch.save(self.time_domain_frame,'pra_node_data_recovered.pt')
+        torch.save(self.time_domain_frame,'beamformer_node_recovered_signals.pt')
 
         # Find directions of arrival
         self.freq_domain_frame = pra.transform.stft.analysis(self.time_domain_frame, self.n_fft, self.n_fft//2).transpose([2, 1, 0])
@@ -111,7 +120,7 @@ class PyRoomAcousticsNode(Node):
             excess_front = int(np.ceil((self.n_fft-1)/2))
             excess_back = int(np.floor((self.n_fft-1)/2))
         
-            torch.save(self.beam_dict[peak_idx]['signal'][excess_front:-excess_back],'pra_node_bf_sig_%s.pt' % ii)
+            torch.save(self.beam_dict[peak_idx]['signal'][excess_front:-excess_back],'pra_node_bf_sig_%s_%s.pt' % (ii,peak_idx))
             self.source_msg.audio.data = self.beam_dict[peak_idx]['signal'][excess_front:-excess_back].tobytes()
             
             self.sources_msg.sources.append(self.source_msg)

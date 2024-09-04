@@ -18,7 +18,7 @@ class AudioPublisherNode(Node):
         
         # Declare parameters with default values
         self.declare_parameter('n_total_channels', 6)
-        self.declare_parameter('channel_indices', [0,1,2,3,4,5])
+        self.declare_parameter('channel_indices_used', [0,1,2,3,4,5])
         self.declare_parameter('src', 'plughw:1,0')
         self.declare_parameter('sample_rate', 16000)
         self.declare_parameter('hop_size', 1600) # .1 seconds
@@ -28,8 +28,8 @@ class AudioPublisherNode(Node):
 
         # Retrieve parameters
         self.n_total_channels = self.get_parameter('n_total_channels').get_parameter_value().integer_value
-        self.channel_indices = self.get_parameter('channel_indices').get_parameter_value().integer_array_value
-        self.n_channels_used = len(self.channel_indices)
+        self.channel_indices_used = self.get_parameter('channel_indices_used').get_parameter_value().integer_array_value
+        self.n_channels_used = len(self.channel_indices_used)
         self.src = self.get_parameter('src').get_parameter_value().string_value
         self.sample_rate = self.get_parameter('sample_rate').get_parameter_value().integer_value
         self.hop_size = self.get_parameter('hop_size').get_parameter_value().integer_value
@@ -41,7 +41,7 @@ class AudioPublisherNode(Node):
 
         # Create audio_info message
         self.audio_info_msg = AudioInfo()
-        self.audio_info_msg.channels = len(self.channel_indices)
+        self.audio_info_msg.channels = len(self.channel_indices_used)
         self.audio_info_msg.sample_rate = self.sample_rate
 
         self.audio_data_msg = AudioDataStamped()
@@ -71,7 +71,7 @@ class AudioPublisherNode(Node):
 
             torch.save(self.frame_in,'frame_data_in_all_channels.pt')
 
-            self.frame_out = self.frame_in[:,self.channel_indices]
+            self.frame_out = self.frame_in[:,self.channel_indices_used]
 
             torch.save(self.frame_out,'frame_data_in_selected_channels.pt')
 
