@@ -73,8 +73,8 @@ class PyRoomAcousticsNode(Node):
         self.ssl_algo = self.get_parameter('ssl_algo').get_parameter_value().string_value
 
         # Audio data storage
-        self.time_domain_frame = torch.zeros([self.frame_size, self.n_channels],dtype=torch.float16)
-        self.freq_domain_frame = torch.zeros([self.n_channels, self.n_fft, self.frame_size],dtype=torch.float16)
+        self.time_domain_frame = torch.zeros([self.frame_size, self.n_channels_used],dtype=torch.float16)
+        self.freq_domain_frame = torch.zeros([self.n_channels_used, self.n_fft, self.frame_size],dtype=torch.float16)
 
         # Audio direction-of-arrival processing
         self.doa = pra.doa.algorithms[self.ssl_algo](self.array_pos, self.sample_rate, self.n_fft, c=self.speed_sound, num_src=self.n_sources, max_four=4, dim=self.doa_dimension)
@@ -91,7 +91,7 @@ class PyRoomAcousticsNode(Node):
 
     def audio_data_callback(self, msg):
 
-        chunk = torch.frombuffer(msg.audio.data,dtype=np.float16).view(-1,self.n_channels_used)
+        chunk = torch.frombuffer(msg.audio.data,dtype=torch.float16).view(-1,self.n_channels_used)
 
         # Roll the frame, and replace oldest contents with new chunk
         self.time_domain_frame = torch.roll(self.time_domain_frame, -chunk.size(0), 0)
@@ -120,7 +120,7 @@ class PyRoomAcousticsNode(Node):
             excess_front = int(np.ceil((self.n_fft-1)/2))
             excess_back = int(np.floor((self.n_fft-1)/2))
         
-            torch.save(self.beam_dict[peak_idx]['signal'][excess_front:-excess_back],'pra_node_bf_sig_%s_%s.pt' % (ii,peak_idx))
+            torch.save(self.beam_dict[peak_idx]['signal'][excess_front:-excess_back],'pra_node_bf_sig_%s.pt' % (ii))
             self.source_msg.audio.data = self.beam_dict[peak_idx]['signal'][excess_front:-excess_back].tobytes()
             
             self.sources_msg.sources.append(self.source_msg)

@@ -54,19 +54,8 @@ class DirectionalSpeechRecNode(Node):
         self.sources_msg = SpeechAzSources()
 
         # ROS parameters
-        self.declare_parameter('n_channels', rclpy.Parameter.Type.INTEGER)
         self.declare_parameter('sample_rate', rclpy.Parameter.Type.INTEGER)
         self.declare_parameter('microphone_frame_id',rclpy.Parameter.Type.STRING)
-        self.declare_parameter('frame_size', rclpy.Parameter.Type.INTEGER)
-        self.declare_parameter('speed_sound',rclpy.Parameter.Type.DOUBLE)
-        self.declare_parameter('n_fft', rclpy.Parameter.Type.INTEGER)
-        self.declare_parameter('n_sources', rclpy.Parameter.Type.INTEGER)
-        self.declare_parameter('f_min', rclpy.Parameter.Type.INTEGER)
-        self.declare_parameter('f_max', rclpy.Parameter.Type.INTEGER)
-        self.declare_parameter('array_x_pos',rclpy.Parameter.Type.DOUBLE_ARRAY)
-        self.declare_parameter('array_y_pos',rclpy.Parameter.Type.DOUBLE_ARRAY)
-        self.declare_parameter('ssl_algo',rclpy.Parameter.Type.STRING)
-        self.declare_parameter('n_silent_frames', rclpy.Parameter.Type.INTEGER)
         self.declare_parameter('trigger_level', rclpy.Parameter.Type.DOUBLE)
         self.declare_parameter('trigger_time', rclpy.Parameter.Type.DOUBLE)
         self.declare_parameter('search_time', rclpy.Parameter.Type.DOUBLE)
@@ -74,21 +63,12 @@ class DirectionalSpeechRecNode(Node):
         self.declare_parameter('pre_trigger_time', rclpy.Parameter.Type.DOUBLE)
         self.declare_parameter('min_voice_samples', rclpy.Parameter.Type.INTEGER)
         self.declare_parameter('src_match_thresh_rad', rclpy.Parameter.Type.DOUBLE)
+        self.declare_parameter('lexicon_package', rclpy.Parameter.Type.STRING)
         self.declare_parameter('lexicon_file', rclpy.Parameter.Type.STRING)
 
-        self.n_channels = self.get_parameter('n_channels').get_parameter_value().integer_value
         self.sample_rate = self.get_parameter('sample_rate').get_parameter_value().integer_value
         self.microphone_frame_id = self.get_parameter('microphone_frame_id').get_parameter_value().string_value
-        self.frame_size = self.get_parameter('frame_size').get_parameter_value().integer_value
-        self.speed_sound = self.get_parameter('speed_sound').get_parameter_value().double_value
-        self.n_fft = self.get_parameter('n_fft').get_parameter_value().integer_value
-        self.n_sources = self.get_parameter('n_sources').get_parameter_value().integer_value
-        self.freq_range = [self.get_parameter('f_min').get_parameter_value().integer_value, self.get_parameter('f_max').get_parameter_value().integer_value]
-        self.array_pos = np.array([self.get_parameter('array_x_pos').get_parameter_value().double_array_value,
-                                   self.get_parameter('array_y_pos').get_parameter_value().double_array_value])
-        self.ssl_algo = self.get_parameter('ssl_algo').get_parameter_value().string_value
 
-        self.n_silent_frames = self.get_parameter('n_silent_frames').get_parameter_value().integer_value 
         self.trigger_level = self.get_parameter('trigger_level').get_parameter_value().double_value
         self.trigger_time = self.get_parameter('trigger_time').get_parameter_value().double_value
         self.search_time = self.get_parameter('search_time').get_parameter_value().double_value
@@ -96,6 +76,7 @@ class DirectionalSpeechRecNode(Node):
         self.pre_trigger_time = self.get_parameter('pre_trigger_time').get_parameter_value().double_value
         self.min_voice_samples = self.get_parameter('min_voice_samples').get_parameter_value().integer_value 
         self.src_match_thresh_rad = self.get_parameter('src_match_thresh_rad').get_parameter_value().double_value
+        self.lexicon_package = self.get_parameter('lexicon_package').get_parameter_value().string_value
         self.lexicon_file = self.get_parameter('lexicon_file').get_parameter_value().string_value
 
         # Torch, voice activity and speech detection
@@ -142,7 +123,7 @@ class DirectionalSpeechRecNode(Node):
         WORD_SCORE = -0.26
 
         self.beam_search_decoder = ctc_decoder(
-            lexicon=os.path.join(get_package_share_directory('situated_interaction'), self.lexicon_file),
+            lexicon=os.path.join(get_package_share_directory(self.lexicon_package), self.lexicon_file),
             tokens=self.lm_files.tokens,
             lm=self.lm_files.lm,
             nbest=3,

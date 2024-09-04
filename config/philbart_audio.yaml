@@ -4,7 +4,7 @@
     # Signal acquisition
     n_total_channels: 16
     channel_indices_used: [0, 1, 2, 3, 4, 5, 6, 7]
-    src: 'plughw:4,0'
+    src: 'plughw:1,0'
     sample_rate: 44100
     hop_size: 44100
     frame_size: 44100 # publish 1 second every second
