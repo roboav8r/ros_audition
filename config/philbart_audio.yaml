@@ -3,8 +3,8 @@
     
     # Signal acquisition
     n_total_channels: 16
-    channel_indices: [0, 1, 2, 3, 4, 5, 6, 7]
-    src: 'plughw:4,0'
+    channel_indices_used: [0, 1, 2, 3, 4, 5, 6, 7]
+    src: 'plughw:1,0'
     sample_rate: 44100
     hop_size: 44100
     frame_size: 44100 # publish 1 second every second
@@ -17,6 +17,7 @@
     n_fft: 512
     f_min: 300
     f_max: 8000
+    doa_dimension: 3
     array_x_pos: [0.43, 0.43, -0.34, -0.34, 0., 0., 0., 0.]
     array_y_pos: [-0.28, 0.28, 0.30, -0.30, -0.29, 0.29, -0.11, 0.11]
     array_z_pos: [0.395, 0.395, 0.395, 0.395, 0.610, 0.610, 0.660, 0.660]
