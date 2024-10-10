@@ -37,7 +37,8 @@ class PyRoomAcousticsNode(Node):
         self.sources_msg = AudioAzSources()
 
         # Declare parameters with default values
-        self.declare_parameter('channel_indices_used', [0,1,2,3,4,5])
+        self.declare_parameter('n_total_channels', rclpy.Parameter.Type.INTEGER)
+        self.declare_parameter('channel_indices_used', rclpy.Parameter.Type.INTEGER_ARRAY)
         self.declare_parameter('sample_rate', rclpy.Parameter.Type.INTEGER)
         self.declare_parameter('microphone_frame_id',rclpy.Parameter.Type.STRING)
         self.declare_parameter('frame_size', rclpy.Parameter.Type.INTEGER)
@@ -52,6 +53,7 @@ class PyRoomAcousticsNode(Node):
         self.declare_parameter('ssl_algo',rclpy.Parameter.Type.STRING)
 
         # Retrieve parameters
+        self.n_total_channels = self.get_parameter('n_total_channels').get_parameter_value().integer_value
         self.channel_indices_used = self.get_parameter('channel_indices_used').get_parameter_value().integer_array_value
         self.n_channels_used = len(self.channel_indices_used)
         self.sample_rate = self.get_parameter('sample_rate').get_parameter_value().integer_value
@@ -91,7 +93,8 @@ class PyRoomAcousticsNode(Node):
 
     def audio_data_callback(self, msg):
 
-        chunk = torch.frombuffer(msg.audio.data,dtype=torch.float16).view(-1,self.n_channels_used)
+        chunk_full = torch.frombuffer(msg.audio.data,dtype=torch.float16).view(-1,self.n_total_channels)
+        chunk = chunk_full[:,self.channel_indices_used]
 
         # Roll the frame, and replace oldest contents with new chunk
         self.time_domain_frame = torch.roll(self.time_domain_frame, -chunk.size(0), 0)
