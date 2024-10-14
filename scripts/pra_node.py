@@ -21,6 +21,7 @@ from ament_index_python.packages import get_package_share_directory
 from audio_common_msgs.msg import AudioDataStamped
 from ros_audition.msg import AudioAzSource, AudioAzSources
 
+from std_srvs.srv import Empty
 
 class PyRoomAcousticsNode(Node):
 
@@ -35,6 +36,8 @@ class PyRoomAcousticsNode(Node):
         self.source_pub = self.create_publisher(AudioAzSources, 'audio_az_sources', 10)
         self.source_msg = AudioAzSource()
         self.sources_msg = AudioAzSources()
+
+        self.reconfigure_srv = self.create_service(Empty, '~/reconfigure', self.reconfigure_callback)
 
         # Declare parameters with default values
         self.declare_parameter('n_total_channels', rclpy.Parameter.Type.INTEGER)
@@ -51,6 +54,10 @@ class PyRoomAcousticsNode(Node):
         self.declare_parameter('array_x_pos',rclpy.Parameter.Type.DOUBLE_ARRAY)
         self.declare_parameter('array_y_pos',rclpy.Parameter.Type.DOUBLE_ARRAY)
         self.declare_parameter('ssl_algo',rclpy.Parameter.Type.STRING)
+
+        self.set_params()
+
+    def set_params(self):
 
         # Retrieve parameters
         self.n_total_channels = self.get_parameter('n_total_channels').get_parameter_value().integer_value
@@ -90,6 +97,14 @@ class PyRoomAcousticsNode(Node):
             # Create beamformer object, compute beam weights
             self.beam_dict[idx]['bf'] = pra.Beamformer(self.array_pos, self.sample_rate, self.n_fft)
             self.beam_dict[idx]['bf'].far_field_weights(self.doa.grid.azimuth[idx])
+
+    def reconfigure_callback(self, _, resp):
+
+        self.get_logger().info("Reconfiguring")
+
+        self.set_params()
+
+        return resp
 
     def audio_data_callback(self, msg):
 
