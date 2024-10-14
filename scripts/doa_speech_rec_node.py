@@ -65,6 +65,10 @@ class DirectionalSpeechRecNode(Node):
         self.declare_parameter('src_match_thresh_rad', rclpy.Parameter.Type.DOUBLE)
         self.declare_parameter('lexicon_package', rclpy.Parameter.Type.STRING)
         self.declare_parameter('lexicon_file', rclpy.Parameter.Type.STRING)
+        self.declare_parameter('am_bundle', rclpy.Parameter.Type.STRING)
+        self.declare_parameter('lm_weight', rclpy.Parameter.Type.DOUBLE)
+        self.declare_parameter('word_score', rclpy.Parameter.Type.DOUBLE)
+        self.declare_parameter('sil_score', rclpy.Parameter.Type.DOUBLE)
 
         self.sample_rate = self.get_parameter('sample_rate').get_parameter_value().integer_value
         self.microphone_frame_id = self.get_parameter('microphone_frame_id').get_parameter_value().string_value
@@ -78,6 +82,10 @@ class DirectionalSpeechRecNode(Node):
         self.src_match_thresh_rad = self.get_parameter('src_match_thresh_rad').get_parameter_value().double_value
         self.lexicon_package = self.get_parameter('lexicon_package').get_parameter_value().string_value
         self.lexicon_file = self.get_parameter('lexicon_file').get_parameter_value().string_value
+        self.am_bundle = self.get_parameter('am_bundle').get_parameter_value().string_value
+        self.lm_weight = self.get_parameter('lm_weight').get_parameter_value().double_value
+        self.word_score = self.get_parameter('word_score').get_parameter_value().double_value
+        self.sil_score = self.get_parameter('sil_score').get_parameter_value().double_value
 
         # Torch, voice activity and speech detection
         self.torch_device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -115,26 +123,21 @@ class DirectionalSpeechRecNode(Node):
         return str(path)
 
     def initialize_asr_model(self):
-        self.bundle = torchaudio.pipelines.WAV2VEC2_ASR_BASE_960H
+        exec('self.bundle = torchaudio.pipelines.%s' % self.am_bundle)
         self.asr_model = self.bundle.get_model().to(self.torch_device)
 
         self.lm_files = download_pretrained_files("librispeech-4-gram")
-        LM_WEIGHT = 3.23
-        WORD_SCORE = -0.26
 
         self.beam_search_decoder = ctc_decoder(
             lexicon=os.path.join(get_package_share_directory(self.lexicon_package), self.lexicon_file),
             tokens=self.lm_files.tokens,
             lm=self.lm_files.lm,
-            nbest=3,
-            beam_size=1500,
-            lm_weight=LM_WEIGHT,
-            word_score=WORD_SCORE,
+            nbest=1,
+            beam_size=50,
+            lm_weight=self.lm_weight,
+            word_score=self.word_score,
+            sil_score=self.sil_score
         )
-
-        # self.acoustic_model = torch.jit.load(self.model_path)
-        # self.acoustic_model.to(self.torch_device)
-        # self.acoustic_model.eval()
 
     def asr(self, voice_tensor):
 
