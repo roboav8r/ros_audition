@@ -26,6 +26,7 @@ from ament_index_python.packages import get_package_share_directory
 from audio_common_msgs.msg import AudioDataStamped
 from ros_audition.msg import AudioAzSources, SpeechAzSource, SpeechAzSources
 
+from std_srvs.srv import Empty
 
 class AudioSource():
     
@@ -49,6 +50,8 @@ class DirectionalSpeechRecNode(Node):
             self.audio_data_callback,
             10)
         
+        self.reconfigure_srv = self.create_service(Empty, '~/reconfigure', self.reconfigure_callback)
+        
         self.source_pub = self.create_publisher(SpeechAzSources, 'speech_az_sources', 10)
         self.source_msg = SpeechAzSource()
         self.sources_msg = SpeechAzSources()
@@ -69,6 +72,10 @@ class DirectionalSpeechRecNode(Node):
         self.declare_parameter('lm_weight', rclpy.Parameter.Type.DOUBLE)
         self.declare_parameter('word_score', rclpy.Parameter.Type.DOUBLE)
         self.declare_parameter('sil_score', rclpy.Parameter.Type.DOUBLE)
+
+        self.initialize()
+        
+    def initialize(self):
 
         self.sample_rate = self.get_parameter('sample_rate').get_parameter_value().integer_value
         self.microphone_frame_id = self.get_parameter('microphone_frame_id').get_parameter_value().string_value
@@ -235,6 +242,14 @@ class DirectionalSpeechRecNode(Node):
             self.voice_sources = []
 
         self.source_pub.publish(self.sources_msg)
+
+    def reconfigure_callback(self, _, resp):
+
+        self.get_logger().info("Reconfiguring")
+
+        self.initialize()
+
+        return resp
 
 def main(args=None):
     rclpy.init(args=args)
