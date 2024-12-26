@@ -73,26 +73,7 @@ class DirectionalSpeechRecNode(Node):
         self.declare_parameter('word_score', rclpy.Parameter.Type.DOUBLE)
         self.declare_parameter('sil_score', rclpy.Parameter.Type.DOUBLE)
 
-        self.initialize()
-        
-    def initialize(self):
-
-        self.sample_rate = self.get_parameter('sample_rate').get_parameter_value().integer_value
-        self.microphone_frame_id = self.get_parameter('microphone_frame_id').get_parameter_value().string_value
-
-        self.trigger_level = self.get_parameter('trigger_level').get_parameter_value().double_value
-        self.trigger_time = self.get_parameter('trigger_time').get_parameter_value().double_value
-        self.search_time = self.get_parameter('search_time').get_parameter_value().double_value
-        self.allowed_gap = self.get_parameter('allowed_gap').get_parameter_value().double_value
-        self.pre_trigger_time = self.get_parameter('pre_trigger_time').get_parameter_value().double_value
-        self.min_voice_samples = self.get_parameter('min_voice_samples').get_parameter_value().integer_value 
-        self.src_match_thresh_rad = self.get_parameter('src_match_thresh_rad').get_parameter_value().double_value
-        self.lexicon_package = self.get_parameter('lexicon_package').get_parameter_value().string_value
-        self.lexicon_file = self.get_parameter('lexicon_file').get_parameter_value().string_value
-        self.am_bundle = self.get_parameter('am_bundle').get_parameter_value().string_value
-        self.lm_weight = self.get_parameter('lm_weight').get_parameter_value().double_value
-        self.word_score = self.get_parameter('word_score').get_parameter_value().double_value
-        self.sil_score = self.get_parameter('sil_score').get_parameter_value().double_value
+        self.load_params()
 
         # Torch, voice activity and speech detection
         self.torch_device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -243,11 +224,30 @@ class DirectionalSpeechRecNode(Node):
 
         self.source_pub.publish(self.sources_msg)
 
+    def load_params(self):
+        
+        self.sample_rate = self.get_parameter('sample_rate').get_parameter_value().integer_value
+        self.microphone_frame_id = self.get_parameter('microphone_frame_id').get_parameter_value().string_value
+
+        self.trigger_level = self.get_parameter('trigger_level').get_parameter_value().double_value
+        self.trigger_time = self.get_parameter('trigger_time').get_parameter_value().double_value
+        self.search_time = self.get_parameter('search_time').get_parameter_value().double_value
+        self.allowed_gap = self.get_parameter('allowed_gap').get_parameter_value().double_value
+        self.pre_trigger_time = self.get_parameter('pre_trigger_time').get_parameter_value().double_value
+        self.min_voice_samples = self.get_parameter('min_voice_samples').get_parameter_value().integer_value 
+        self.src_match_thresh_rad = self.get_parameter('src_match_thresh_rad').get_parameter_value().double_value
+        self.lexicon_package = self.get_parameter('lexicon_package').get_parameter_value().string_value
+        self.lexicon_file = self.get_parameter('lexicon_file').get_parameter_value().string_value
+        self.am_bundle = self.get_parameter('am_bundle').get_parameter_value().string_value
+        self.lm_weight = self.get_parameter('lm_weight').get_parameter_value().double_value
+        self.word_score = self.get_parameter('word_score').get_parameter_value().double_value
+        self.sil_score = self.get_parameter('sil_score').get_parameter_value().double_value
+
     def reconfigure_callback(self, _, resp):
 
         self.get_logger().info("Reconfiguring")
 
-        self.initialize()
+        self.load_params()
 
         return resp
 
