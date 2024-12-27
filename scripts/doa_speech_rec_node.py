@@ -78,13 +78,7 @@ class DirectionalSpeechRecNode(Node):
         # Torch, voice activity and speech detection
         self.torch_device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         
-        self.vad = torchaudio.transforms.Vad(self.sample_rate, 
-                                             trigger_level=self.trigger_level, 
-                                             trigger_time=self.trigger_time,
-                                             search_time=self.search_time,
-                                             allowed_gap=self.allowed_gap,
-                                             pre_trigger_time=self.pre_trigger_time) 
-        self.vad.to(self.torch_device)
+        self.initialize_vad()
 
         self.url_prefix = "https://huggingface.co/Zengwei/icefall-asr-librispeech-pruned-transducer-stateless7-ctc-2022-12-01"
         self.model_link = f"{self.url_prefix}/resolve/main/exp/cpu_jit.pt"
@@ -126,6 +120,15 @@ class DirectionalSpeechRecNode(Node):
             word_score=self.word_score,
             sil_score=self.sil_score
         )
+    
+    def initialize_vad(self):
+        self.vad = torchaudio.transforms.Vad(self.sample_rate, 
+                                        trigger_level=self.trigger_level, 
+                                        trigger_time=self.trigger_time,
+                                        search_time=self.search_time,
+                                        allowed_gap=self.allowed_gap,
+                                        pre_trigger_time=self.pre_trigger_time) 
+        self.vad.to(self.torch_device)
 
     def asr(self, voice_tensor):
 
@@ -248,6 +251,8 @@ class DirectionalSpeechRecNode(Node):
         self.get_logger().info("Reconfiguring")
 
         self.load_params()
+        self.initialize_vad()
+        self.initialize_asr_model()
 
         return resp
 
